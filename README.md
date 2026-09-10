@@ -9,9 +9,6 @@
 ```mermaid
     erDiagram
 
-    shops ||--o{ users : "hasMany"
-    shops ||--o{ admins : "hasMany"
-
     users ||--o{ attendances : "hasMany"
     users ||--o{ attendance_corrections : "hasMany"
 
@@ -23,16 +20,8 @@
 
     rests ||--o{ rest_corrections : "hasMany"
 
-    shops {
-        bigint id PK
-        string shop_name
-        datetime created_at
-        datetime updated_at
-    }
-
     admins {
         bigint id PK
-        bigint shop_id FK
         string name
         string email
         datetime created_at
@@ -41,7 +30,6 @@
 
     users {
         bigint id PK
-        bigint shop_id FK
         string name
         string email
         datetime created_at
