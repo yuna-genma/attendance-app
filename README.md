@@ -62,6 +62,8 @@
         bigint user_id FK
         bigint admin_id FK
         string status
+        time new_clock_in
+        time new_clock_out
         datetime created_at
         datetime updated_at
     }
@@ -71,6 +73,8 @@
         bigint rest_id FK
         bigint admin_id FK
         string status
+        time new_break_in
+        time new_break_out
         datetime created_at
         datetime updated_at
     }

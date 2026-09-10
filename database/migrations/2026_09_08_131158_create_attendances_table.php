@@ -13,8 +13,8 @@ return new class extends Migration {
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->string('attendance_status')->default('出勤中');
             $table->date('date');
-            $table->dateTime('clock_in');
-            $table->dateTime('clock_out')->nullable();
+            $table->time('clock_in');
+            $table->time('clock_out')->nullable();
             $table->timestamps();
         });
     }

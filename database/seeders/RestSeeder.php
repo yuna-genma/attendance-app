@@ -2,16 +2,23 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use App\Models\Attendance;
 use Illuminate\Database\Seeder;
+use App\Models\Rest;
 
 class RestSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
+
     public function run(): void
     {
-        //
+        $attendances = Attendance::all();
+
+        foreach ($attendances as $attendance) {
+            Rest::factory()->create([
+                'attendance_id' => $attendance->id,
+                'created_at' => $attendance->created_at,
+                'updated_at' => $attendance->updated_at,
+            ]);
+        }
     }
 }

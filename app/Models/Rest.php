@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Attendance;
-use App\Models\RestCorrections;
+use App\Models\RestCorrection;
 
 class Rest extends Model
 {
@@ -24,6 +24,6 @@ class Rest extends Model
 
     public function restCorrections()
     {
-        return $this->hasMany(RestCorrections::class);
+        return $this->hasMany(RestCorrection::class);
     }
 }

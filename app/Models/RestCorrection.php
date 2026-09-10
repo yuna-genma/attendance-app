@@ -8,7 +8,7 @@ use App\Enums\CorrectionStatus;
 use App\Models\Admin;
 use App\Models\Rest;
 
-class RestCorrections extends Model
+class RestCorrection extends Model
 {
     use HasFactory;
 
