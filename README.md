@@ -6,6 +6,9 @@
 
 ## ER図
 
+```mermaid
+    erDiagram
+
     shops ||--o{ users : "hasMany"
     shops ||--o{ admins : "hasMany"
 
@@ -76,6 +79,7 @@
         string status
         timestamps
     }
+```
 
 ## URL
 
