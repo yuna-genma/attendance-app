@@ -25,8 +25,9 @@
 
     shops {
         bigint id PK
-        string name
-        timestamps
+        string shop_name
+        datetime created_at
+        datetime updated_at
     }
 
     admins {
@@ -34,7 +35,8 @@
         bigint shop_id FK
         string name
         string email
-        timestamps
+        datetime created_at
+        datetime updated_at
     }
 
     users {
@@ -42,7 +44,8 @@
         bigint shop_id FK
         string name
         string email
-        timestamps
+        datetime created_at
+        datetime updated_at
     }
 
     attendances {
@@ -52,7 +55,8 @@
         time clock_in
         time clock_out
         string attendance_status
-        timestamps
+        datetime created_at
+        datetime updated_at
     }
 
     rests {
@@ -60,7 +64,8 @@
         bigint attendance_id FK
         time break_in
         time break_out
-        timestamps
+        datetime created_at
+        datetime updated_at
     }
 
     attendance_corrections {
@@ -69,7 +74,8 @@
         bigint user_id FK
         bigint admin_id FK
         string status
-        timestamps
+        datetime created_at
+        datetime updated_at
     }
 
     rest_corrections {
@@ -77,7 +83,8 @@
         bigint rest_id FK
         bigint admin_id FK
         string status
-        timestamps
+        datetime created_at
+        datetime updated_at
     }
 ```
 
