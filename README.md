@@ -6,9 +6,8 @@
 
 ## ER図
 
-erDiagram
-shops ||--o{ users : "hasMany"
-shops ||--o{ admins : "hasMany"
+    shops ||--o{ users : "hasMany"
+    shops ||--o{ admins : "hasMany"
 
     users ||--o{ attendances : "hasMany"
     users ||--o{ attendance_corrections : "hasMany"
