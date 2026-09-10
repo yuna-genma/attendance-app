@@ -12,8 +12,8 @@ return new class extends Migration {
             $table->id();
             $table->foreignId('rest_id')->constrained()->onDelete('cascade');
             $table->foreignId('admin_id')->nullable()->constrained()->onDelete('cascade');
-            $table->dateTime('new_break_in')->nullable();
-            $table->dateTime('new_break_out')->nullable();
+            $table->time('new_break_in')->nullable();
+            $table->time('new_break_out')->nullable();
             $table->string('status')->default('申請中');
             $table->timestamps();
         });

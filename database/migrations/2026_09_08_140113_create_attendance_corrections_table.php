@@ -13,8 +13,8 @@ return new class extends Migration {
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->foreignId('admin_id')->nullable()->constrained()->onDelete('cascade');
             $table->foreignId('attendance_id')->constrained()->onDelete('cascade');
-            $table->dateTime('new_clock_in')->nullable();
-            $table->dateTime('new_clock_out')->nullable();
+            $table->time('new_clock_in')->nullable();
+            $table->time('new_clock_out')->nullable();
             $table->string('comment')->nullable();
             $table->string('status')->default('申請中');
             $table->timestamps();
