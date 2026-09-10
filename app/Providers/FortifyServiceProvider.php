@@ -17,6 +17,7 @@ use Illuminate\Support\Facades\Hash;
 use App\Models\Admin;
 use App\Models\User;
 use Laravel\Fortify\Contracts\LoginResponse;
+use Laravel\Fortify\Contracts\LogoutResponse;
 
 class FortifyServiceProvider extends ServiceProvider
 {
@@ -75,6 +76,15 @@ class FortifyServiceProvider extends ServiceProvider
             {
                 $redirectUrl = $request->is('admin*') ? '/admin/attendance/list' : '/attendance';
                 return redirect()->intended($redirectUrl);
+            }
+        });
+
+        $this->app->instance(LogoutResponse::class, new class implements LogoutResponse {
+            public function toResponse($request)
+            {
+                return $request->is('admin*')
+                    ? redirect()->route('admin.login')
+                    : redirect('/login');
             }
         });
     }
