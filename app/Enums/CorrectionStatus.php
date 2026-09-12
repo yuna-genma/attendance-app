@@ -3,6 +3,6 @@ namespace App\Enums;
 
 enum CorrectionStatus: string
 {
-    case PENDING = '申請中';
-    case APPROVED = '承認済';
+    case PENDING = '承認待ち';
+    case APPROVED = '承認済み';
 }

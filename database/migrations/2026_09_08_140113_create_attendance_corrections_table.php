@@ -16,7 +16,7 @@ return new class extends Migration {
             $table->time('new_clock_in')->nullable();
             $table->time('new_clock_out')->nullable();
             $table->string('comment')->nullable();
-            $table->string('status')->default('申請中');
+            $table->string('approval_status')->default('承認待ち');
             $table->timestamps();
         });
     }
