@@ -18,7 +18,7 @@ class AttendanceCorrectionFactory extends Factory
             'user_id' => $attendance->user_id,
             'admin_id' => Admin::factory(),
             'attendance_id' => $attendance->id,
-            'status' => fake()->randomElement(CorrectionStatus::cases())->value,
+            'approval_status' => fake()->randomElement(CorrectionStatus::cases())->value,
             'new_clock_in' => fake()->time('H:i:s', '11:00:00'),
             'new_clock_out' => fake()->time('H:i:s', '21:00:00'),
             'created_at' => fake()->dateTimeBetween($attendance->created_at, 'now'),

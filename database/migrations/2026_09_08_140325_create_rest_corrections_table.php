@@ -14,7 +14,7 @@ return new class extends Migration {
             $table->foreignId('admin_id')->nullable()->constrained()->onDelete('cascade');
             $table->time('new_break_in')->nullable();
             $table->time('new_break_out')->nullable();
-            $table->string('status')->default('申請中');
+            $table->string('approval_status')->default('承認待ち');
             $table->timestamps();
         });
     }

@@ -16,7 +16,7 @@ class RestCorrectionFactory extends Factory
         return [
             'rest_id' => $rest->id,
             'admin_id' => Admin::factory(),
-            'status' => fake()->randomElement(CorrectionStatus::cases())->value,
+            'approval_status' => fake()->randomElement(CorrectionStatus::cases())->value,
             'new_break_in' => fake()->time('H:i:s', '12:00:00'),
             'new_break_out' => fake()->time('H:i:s', '13:00:00'),
             'created_at' => fake()->dateTimeBetween($rest->created_at, 'now'),
