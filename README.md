@@ -13,7 +13,6 @@
     users ||--o{ attendance_corrections : "hasMany"
 
     admins ||--o{ attendance_corrections : "hasMany"
-    admins ||--o{ rest_corrections : "hasMany"
 
     attendances ||--o{ rests : "hasMany"
     attendances ||--o{ attendance_corrections : "hasMany"
