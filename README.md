@@ -13,6 +13,7 @@
     users ||--o{ attendance_corrections : "hasMany"
 
     admins ||--o{ attendance_corrections : "hasMany"
+    admins ||--o{ users : "hasMany"
 
     attendances ||--o{ rests : "hasMany"
     attendances ||--o{ attendance_corrections : "hasMany"
@@ -29,6 +30,7 @@
 
     users {
         bigint id PK
+        bigint admin_id FK
         string name
         string email
         datetime created_at
