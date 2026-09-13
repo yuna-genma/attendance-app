@@ -21,7 +21,7 @@ class AttendanceCorrection extends Model
         'new_clock_in',
         'new_clock_out',
         'comment',
-        'status',
+        'approval_status',
     ];
 
     protected $casts = [
