@@ -14,7 +14,6 @@ return new class extends Migration {
             $table->foreignId('rest_id')->nullable()->constrained()->onDelete('cascade');
             $table->time('new_break_in')->nullable();
             $table->time('new_break_out')->nullable();
-            $table->string('approval_status')->default('承認待ち');
             $table->timestamps();
         });
     }

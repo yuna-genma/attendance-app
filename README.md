@@ -72,7 +72,6 @@
         bigint id PK
         bigint rest_id FK "nullable"
         bigint attendance_correction_id FK
-        string approval_status
         time new_break_in
         time new_break_out
         datetime created_at
