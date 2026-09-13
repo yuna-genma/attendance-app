@@ -8,6 +8,7 @@ use App\Enums\CorrectionStatus;
 use App\Models\Admin;
 use App\Models\Attendance;
 use App\Models\User;
+use App\Models\RestCorrection;
 
 class AttendanceCorrection extends Model
 {
@@ -40,5 +41,10 @@ class AttendanceCorrection extends Model
     public function admin()
     {
         return $this->belongsTo(Admin::class);
+    }
+
+    public function restCorrections()
+    {
+        return $this->hasMany(RestCorrection::class);
     }
 }

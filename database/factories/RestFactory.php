@@ -9,14 +9,10 @@ class RestFactory extends Factory
 {
     public function definition(): array
     {
-        $attendance = Attendance::factory()->create();
-
         return [
-            'attendance_id' => $attendance->id,
-            'break_in' => fake()->time('H:i:s', '13:00:00'),
-            'break_out' => fake()->time('H:i:s', '14:00:00'),
-            'created_at' => $attendance->created_at,
-            'updated_at' => $attendance->updated_at,
+            'attendance_id' => fn() => Attendance::factory()->create()->id,
+            'break_in' => '12:00:00',
+            'break_out' => '13:00:00',
         ];
     }
 }

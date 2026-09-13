@@ -42,16 +42,46 @@ class Attendance extends Model
         return $this->hasMany(AttendanceCorrection::class);
     }
 
+    protected function date(): Attribute
+    {
+        return Attribute::get(function ($value) {
+            if (!$value)
+                return '';
+
+            return Carbon::parse($value)->locale('ja')->isoFormat('MM/DD(ddd)');
+        });
+    }
+
+    protected function dateObject(): Attribute
+    {
+        return Attribute::get(function ($value, $attributes) {
+            $rawValue = $attributes['date'] ?? null;
+            if (!$rawValue)
+                return null;
+            return Carbon::parse($rawValue)->locale('ja');
+        });
+    }
+    protected function clockIn(): Attribute
+    {
+        return Attribute::get(fn($value) => $value ? Carbon::parse($value)->format('H:i') : '');
+    }
+
+    protected function clockOut(): Attribute
+    {
+        return Attribute::get(fn($value) => $value ? Carbon::parse($value)->format('H:i') : '');
+    }
+
     protected function totalBreakTime(): Attribute
     {
         return Attribute::make(
             get: function () {
                 $totalMinutes = 0;
-                foreach ($this->rests as $rest) {
+                $rests = $this->rests()->get();
+                foreach ($rests as $rest) {
                     if ($rest->break_in && $rest->break_out) {
                         $in = Carbon::parse($rest->break_in);
                         $out = Carbon::parse($rest->break_out);
-                        $totalMinutes += $in->diffInMinutes($out);
+                        $totalMinutes += $out->diffInMinutes($in);
                     }
                 }
                 $hours = floor($totalMinutes / 60);

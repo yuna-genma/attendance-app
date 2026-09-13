@@ -7,7 +7,6 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use App\Models\AttendanceCorrection;
-use App\Models\RestCorrection;
 
 class Admin extends Authenticatable
 {
@@ -34,8 +33,4 @@ class Admin extends Authenticatable
         return $this->hasMany(AttendanceCorrection::class);
     }
 
-    public function restCorrections()
-    {
-        return $this->hasMany(RestCorrection::class);
-    }
 }

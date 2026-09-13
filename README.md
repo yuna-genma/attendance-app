@@ -18,7 +18,7 @@
     attendances ||--o{ rests : "hasMany"
     attendances ||--o{ attendance_corrections : "hasMany"
 
-    rests ||--o{ rest_corrections : "hasMany"
+    attendance_corrections ||--o{ rest_corrections : "hasMany"
 
     admins {
         bigint id PK
@@ -60,19 +60,20 @@
         bigint id PK
         bigint attendance_id FK
         bigint user_id FK
-        bigint admin_id FK
-        string status
+        bigint admin_id FK "nullable"
+        string approval_status
         time new_clock_in
         time new_clock_out
+        string comment
         datetime created_at
         datetime updated_at
     }
 
     rest_corrections {
         bigint id PK
-        bigint rest_id FK
-        bigint admin_id FK
-        string status
+        bigint rest_id FK "nullable"
+        bigint attendance_correction_id FK
+        string approval_status
         time new_break_in
         time new_break_out
         datetime created_at
