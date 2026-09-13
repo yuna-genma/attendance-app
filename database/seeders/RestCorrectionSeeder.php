@@ -2,27 +2,29 @@
 
 namespace Database\Seeders;
 
+use App\Models\AttendanceCorrection;
 use Illuminate\Database\Seeder;
 use App\Models\Rest;
-use App\Models\Admin;
 use App\Models\RestCorrection;
 class RestCorrectionSeeder extends Seeder
 {
 
     public function run(): void
     {
-        $admins = Admin::all();
-        $rests = Rest::all();
+        $attendanceCorrections = AttendanceCorrection::all();
 
-        if ($admins->isEmpty()) {
+        if ($attendanceCorrections->isEmpty()) {
             return;
         }
 
-        foreach ($rests as $rest) {
+        foreach ($attendanceCorrections as $correction) {
             if (fake()->boolean(25)) {
+                $existingRest = Rest::where('attendance_id', $correction->attendance_id)
+                    ->inRandomOrder()->first();
+
                 RestCorrection::factory()->create([
-                    'rest_id' => $rest->id,
-                    'admin_id' => $admins->random()->id,
+                    'attendance_correction_id' => $correction->id,
+                    'rest_id' => $existingRest ? $existingRest->id : null,
                 ]);
             }
         }

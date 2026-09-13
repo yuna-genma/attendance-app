@@ -11,14 +11,15 @@ class RestSeeder extends Seeder
 
     public function run(): void
     {
-        $attendances = Attendance::all();
-
-        foreach ($attendances as $attendance) {
-            Rest::factory()->create([
-                'attendance_id' => $attendance->id,
-                'created_at' => $attendance->created_at,
-                'updated_at' => $attendance->updated_at,
-            ]);
-        }
+        Attendance::query()->chunkById(100, function ($attendances): void {
+            foreach ($attendances as $attendance) {
+                Rest::updateOrCreate([
+                    'attendance_id' => $attendance->id
+                ], [
+                    'break_in' => '12:00:00',
+                    'break_out' => '13:00:00',
+                ]);
+            }
+        });
     }
 }

@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Enums\CorrectionStatus;
-use App\Models\Admin;
+use App\Models\AttendanceCorrection;
 use App\Models\Rest;
 
 class RestCorrection extends Model
@@ -24,13 +24,14 @@ class RestCorrection extends Model
         'status' => CorrectionStatus::class,
     ];
 
-    public function rest()
+    public function attendanceCorrection()
+    {
+        return $this->belongsTo(AttendanceCorrection::class);
+    }
+
+    public function originalRest()
     {
         return $this->belongsTo(Rest::class);
     }
 
-    public function admin()
-    {
-        return $this->belongsTo(Admin::class);
-    }
 }
