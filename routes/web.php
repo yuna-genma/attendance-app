@@ -1,10 +1,14 @@
 <?php
 
+use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AttendanceController;
 use App\Http\Controllers\CorrectionRequestController;
+use App\Http\Controllers\AdminAuthController;
+use App\Http\Requests\UpdateAttendanceRequest;
 use Illuminate\Support\Facades\Route;
 use Laravel\Fortify\Http\Controllers\AuthenticatedSessionController;
 use Laravel\Fortify\Http\Controllers\RegisteredUserController;
+use Illuminate\Http\Request;
 
 
 Route::middleware(['web', 'guest'])->group(function () {
@@ -12,7 +16,11 @@ Route::middleware(['web', 'guest'])->group(function () {
     Route::post('/login', [AuthenticatedSessionController::class, 'store']);
     Route::get('/register', [RegisteredUserController::class, 'create']);
     Route::post('/register', [RegisteredUserController::class, 'store']);
+
+    Route::get('/admin/login', [AdminAuthController::class, 'create'])->name('admin.login');
+    Route::post('/admin/login', [AdminAuthController::class, 'store']);
 });
+
 
 Route::middleware(['web', 'auth:web'])->group(function () {
     Route::post('/logout', [AuthenticatedSessionController::class, 'destroy']);
@@ -21,17 +29,28 @@ Route::middleware(['web', 'auth:web'])->group(function () {
     Route::get('/attendance/list', [AttendanceController::class, 'userAttendanceIndex']);
 
     Route::get('/attendance/{id}', function ($id) {
+        if (auth()->check() && auth()->user()->admin_status) {
+            return redirect('/admin/attendance/' . $id);
+        }
         return redirect('/attendance/detail/' . $id);
     });
     Route::get('/attendance/detail/{id}', [CorrectionRequestController::class, 'create']);
-    Route::post('/attendance/{id}', [CorrectionRequestController::class, 'store']);
+    Route::post('/attendance/{id}', function (Request $request, $id) {
+        if (auth()->check() && auth()->user()->admin_status) {
+            return app(AdminController::class)->update(
+                app(UpdateAttendanceRequest::class),
+                $id
+            );
+        }
+        return app(CorrectionRequestController::class)->store($request, $id);
+    });
 });
 
-Route::middleware(['web', 'guest'])->prefix('admin')->name('admin.')->group(function () {
-    Route::get('/login', [AuthenticatedSessionController::class, 'create'])->name('admin.login');
-    Route::post('/login', [AuthenticatedSessionController::class, 'store']);
-});
-
-Route::middleware(['web', 'auth:admin'])->prefix('admin')->name('admin.')->group(function () {
-    Route::post('/logout', [AuthenticatedSessionController::class, 'destroy']);
+Route::middleware(['auth', 'auth:web', 'admin.check'])->group(function () {
+    Route::post('/admin/logout', [AdminAuthController::class, 'destroy']);
+    Route::get('/admin/attendance/list', [AdminController::class, 'attendanceIndex']);
+    Route::get('/admin/attendance/{id}', [AdminController::class, 'show']);
+    Route::post('/admin/attendance/{id}', [AdminController::class, 'update']);
+    Route::get('/admin/staff/list', [AdminController::class, 'staffIndex']);
+    Route::get('/admin/attendance/staff/{id}', [AdminController::class, 'staffShow']);
 });

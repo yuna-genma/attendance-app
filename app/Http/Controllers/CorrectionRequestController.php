@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\AttendanceCorrectionRequest;
 use App\Models\Attendance;
-use App\Models\AttendanceCorrect;
+use App\Enums\CorrectionStatus;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 
@@ -13,7 +13,6 @@ class CorrectionRequestController extends Controller
     public function create($id)
     {
         $attendance = Attendance::findOrFail($id);
-
         $user = auth()->user();
 
         $breaks = $attendance->rests->map(function ($rest) {
@@ -24,7 +23,7 @@ class CorrectionRequestController extends Controller
         })->toArray();
 
         $pendingCorrection = $attendance->attendanceCorrections()
-            ->where('approval_status', '承認待ち')
+            ->where('approval_status', CorrectionStatus::PENDING->value)
             ->first();
 
         $attendanceDate = $attendance->date_object;
@@ -45,7 +44,7 @@ class CorrectionRequestController extends Controller
 
     public function store(AttendanceCorrectionRequest $request, $id)
     {
-        $attendance = Attendance::findOrFail($id);
+        $attendance = Attendance::with('rests')->findOrFail($id);
         $request->validated();
 
         DB::transaction(function () use ($request, $attendance) {
@@ -53,11 +52,11 @@ class CorrectionRequestController extends Controller
 
             $correction = $attendance->attendanceCorrections()->create([
                 'user_id' => auth()->id(),
-                'admin_id' => null,
-                'clock_in' => Carbon::parse($baseDate . '' . $request->new_clock_in),
-                'clock_out' => Carbon::parse($baseDate . '' . $request->new_clock_out),
+                'approved_by' => null,
+                'new_clock_in' => Carbon::parse($baseDate . ' ' . $request->new_clock_in),
+                'new_clock_out' => Carbon::parse($baseDate . ' ' . $request->new_clock_out),
                 'comment' => $request->comment,
-                'approval_status' => '承認待ち',
+                'approval_status' => CorrectionStatus::PENDING->value,
             ]);
 
             if ($request->has('new_clock_in')) {
@@ -70,8 +69,8 @@ class CorrectionRequestController extends Controller
                         $restId = $existRestIds[$index] ?? null;
                         $correction->restCorrections()->create([
                             'rest_id' => $restId,
-                            'break_in' => Carbon::parse($baseDate . '' . $breakIn),
-                            'break_out' => Carbon::parse($baseDate . '' . $breakOut),
+                            'new_break_in' => Carbon::parse($baseDate . ' ' . $breakIn),
+                            'new_break_out' => Carbon::parse($baseDate . ' ' . $breakOut),
                         ]);
                     }
                 }

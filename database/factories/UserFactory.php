@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 
+
 class UserFactory extends Factory
 {
 
@@ -18,12 +19,20 @@ class UserFactory extends Factory
             'email' => fake()->unique()->safeEmail(),
             'email_verified_at' => now(),
             'password' => static::$password ??= Hash::make('password'),
+            'admin_status' => false,
             'remember_token' => Str::random(10),
             'created_at' => fake()->dateTimeBetween('-1year', '-6months'),
             'updated_at' => function (array $attributes) {
                 return fake()->dateTimeBetween($attributes['created_at'], 'now');
             }
         ];
+    }
+
+    public function admin(): static
+    {
+        return $this->state(fn(array $attributes) => [
+            'admin_status' => true,
+        ]);
     }
 
     public function unverified(): static

@@ -10,29 +10,20 @@
     erDiagram
 
     users ||--o{ attendances : "hasMany"
-    users ||--o{ attendance_corrections : "hasMany"
-
-    admins ||--o{ attendance_corrections : "hasMany"
-    admins ||--o{ users : "hasMany"
+    users ||--o{ attendance_corrections : "申請者 (user_id)"
+    users ||--o{ attendance_corrections : "承認者 (approved_by) [nullable]"
 
     attendances ||--o{ rests : "hasMany"
     attendances ||--o{ attendance_corrections : "hasMany"
 
     attendance_corrections ||--o{ rest_corrections : "hasMany"
 
-    admins {
-        bigint id PK
-        string name
-        string email
-        datetime created_at
-        datetime updated_at
-    }
-
     users {
         bigint id PK
-        bigint admin_id FK
         string name
         string email
+        string password
+        boolean admin_status "true: 管理者 / false: 一般ユーザー"
         datetime created_at
         datetime updated_at
     }
@@ -60,8 +51,8 @@
     attendance_corrections {
         bigint id PK
         bigint attendance_id FK
-        bigint user_id FK
-        bigint admin_id FK "nullable"
+        bigint user_id FK "申請したユーザー"
+        bigint approved_by FK "承認した管理者 [nullable]"
         string approval_status
         time new_clock_in
         time new_clock_out

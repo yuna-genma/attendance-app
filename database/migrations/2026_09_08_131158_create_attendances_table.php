@@ -11,7 +11,7 @@ return new class extends Migration {
         Schema::create('attendances', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
-            $table->string('attendance_status')->default('出勤中');
+            $table->string('attendance_status')->default('勤務外');
             $table->date('date');
             $table->unique(['user_id', 'date']);
             $table->time('clock_in');

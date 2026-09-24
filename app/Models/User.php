@@ -3,12 +3,13 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use App\Models\Attendance;
 use App\Models\AttendanceCorrection;
-use App\Models\Admin;
 
 class User extends Authenticatable
 {
@@ -18,6 +19,7 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'admin_status',
     ];
 
     protected $hidden = [
@@ -30,18 +32,19 @@ class User extends Authenticatable
         'password' => 'hashed',
     ];
 
-    public function attendances()
+    public function attendances(): HasMany
     {
         return $this->hasMany(Attendance::class);
     }
 
-    public function attendanceCorrections()
+    public function attendanceCorrections(): HasMany
     {
-        return $this->hasMany(AttendanceCorrection::class);
+        return $this->hasMany(AttendanceCorrection::class, 'user_id');
     }
 
-    public function admin()
+    public function approvedCorrections(): HasMany
     {
-        return $this->belongsTo(Admin::class);
+        return $this->hasMany(AttendanceCorrection::class, 'approved_by');
     }
+
 }

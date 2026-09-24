@@ -3,17 +3,12 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
-use App\Models\Attendance;
 
-class AttendanceCorrectionRequest extends FormRequest
+class UpdateAttendanceRequest extends FormRequest
 {
-
     public function authorize(): bool
     {
-        $attendanceId = $this->route('id');
-        $attendance = Attendance::find($attendanceId);
-
-        return $attendance && $attendance->user_id === auth()->id();
+        return true;
     }
 
     public function rules(): array
