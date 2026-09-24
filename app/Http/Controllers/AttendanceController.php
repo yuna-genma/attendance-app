@@ -2,31 +2,35 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\AttendanceStatus;
 use App\Http\Requests\AttendanceActionRequest;
+use App\Http\Requests\UserAttendanceIndexRequest;
 use App\Models\Attendance;
 use Illuminate\Support\Carbon;
-use Illuminate\Http\Request;
 class AttendanceController extends Controller
 {
 
     public function create()
     {
         $user = auth()->user();
-        $today = Carbon::now('Asia/Tokyo')->toDateString();
+        $now = Carbon::now('Asia/Tokyo');
+        $today = $now->toDateString();
 
         $attendance = Attendance::where('user_id', $user->id)
             ->where('date', $today)
             ->first();
 
-        $status = $attendance ? $attendance->attendance_status->value : '勤務外';
+        $user->attendance_status = $attendance
+            ? $attendance->attendance_status->value
+            : AttendanceStatus::BEFORE_WORK->value;
 
         $formattedDate = $today;
-        $formattedTime = Carbon::now('Asia/Tokyo')->format('H:i');
+        $formattedTime = $now->format('H:i');
+
         return view('user.attendance-register', compact(
             'user',
             'formattedDate',
             'formattedTime',
-            'status'
         ));
     }
 
@@ -34,15 +38,17 @@ class AttendanceController extends Controller
     {
         $user = auth()->user();
         $action = $request->input('action');
-        $today = Carbon::today()->toDateString();
-        $nowTime = Carbon::now('Asia/Tokyo')->format('H:i');
+
+        $now = Carbon::now('Asia/Tokyo');
+        $today = $now->toDateString();
+        $nowTime = $now->format('H:i');
 
         if ($action === 'clock_in') {
             Attendance::create([
                 'user_id' => $user->id,
                 'date' => $today,
                 'clock_in' => $nowTime,
-                'attendance_status' => '出勤中',
+                'attendance_status' => AttendanceStatus::WORKING,
             ]);
             return redirect()->back();
         }
@@ -51,51 +57,28 @@ class AttendanceController extends Controller
             ->where('date', $today)
             ->firstOrFail();
 
-        if ($action === 'clock_out') {
-            $attendance->update([
-                'clock_out' => $nowTime,
-                'attendance_status' => '退勤済'
-            ]);
-        }
-
-        if ($action === 'break_in') {
-            $attendance->rests()->create([
-                'break_in' => $nowTime,
-            ]);
-            $attendance->update(['attendance_status' => '休憩中']);
-        }
-
-        if ($action === 'break_out') {
-            $latestRest = $attendance->rests()->whereNull('break_out')->latest()->first();
-            if ($latestRest) {
-                $latestRest->update(['break_out' => $nowTime]);
-            }
-            $attendance->update(['attendance_status' => '出勤中']);
-        }
+        $attendance->prrcessAction($action, $nowTime);
 
         return redirect()->back();
     }
 
-    public function userAttendanceIndex(Request $request)
+    public function userAttendanceIndex(UserAttendanceIndexRequest $request)
     {
+        $validated = $request->validated();
+
         $user = auth()->user();
-
-        $dateString = $request->query('date');
-
-        if ($dateString) {
-            $date = Carbon::parse($dateString)->startOfMonth();
-        } else {
-            $date = Carbon::today()->startOfMonth();
-        }
+        $date = isset($validated['date'])
+            ? Carbon::parse($validated['date'])->startOfMonth()
+            : Carbon::today()->startOfMonth();
 
         $previousMonth = $date->copy()->subMonth()->format('Y-m');
         $nextMonth = $date->copy()->addMonth()->format('Y-m');
 
         $formattedAttendanceRecords = Attendance::with('rests')
             ->where('user_id', $user->id)
-            ->whereYear('date', $date)
-            ->whereMonth('date', $date)
-            ->oldest()
+            ->whereYear('date', $date->year)
+            ->whereMonth('date', $date->month)
+            ->oldest('date')
             ->get();
 
         return view('user.user-attendance-list', compact(

@@ -11,7 +11,6 @@ class DatabaseSeeder extends Seeder
     {
         $this->call([
             UserSeeder::class,
-            AdminSeeder::class,
             AttendanceSeeder::class,
             RestSeeder::class,
             AttendanceCorrectionSeeder::class,
