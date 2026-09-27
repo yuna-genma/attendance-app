@@ -2,9 +2,10 @@
 
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AttendanceController;
-use App\Http\Controllers\CorrectionRequestController;
+use App\Http\Controllers\UserCorrectionRequestController;
 use App\Http\Controllers\AdminAuthController;
 use App\Http\Requests\UpdateAttendanceRequest;
+use App\Models\AttendanceCorrection;
 use Illuminate\Support\Facades\Route;
 use Laravel\Fortify\Http\Controllers\AuthenticatedSessionController;
 use Laravel\Fortify\Http\Controllers\RegisteredUserController;
@@ -34,7 +35,7 @@ Route::middleware(['web', 'auth:web'])->group(function () {
         }
         return redirect('/attendance/detail/' . $id);
     });
-    Route::get('/attendance/detail/{id}', [CorrectionRequestController::class, 'create']);
+    Route::get('/attendance/detail/{id}', [UserCorrectionRequestController::class, 'create']);
     Route::post('/attendance/{id}', function (Request $request, $id) {
         if (auth()->check() && auth()->user()->admin_status) {
             return app(AdminController::class)->update(
@@ -42,7 +43,17 @@ Route::middleware(['web', 'auth:web'])->group(function () {
                 $id
             );
         }
-        return app(CorrectionRequestController::class)->store($request, $id);
+        return app(UserCorrectionRequestController::class)->store($request, $id);
+    });
+    Route::get('/stamp_correction_request/list', [UserCorrectionRequestController::class, 'userApplicationIndex']);
+    Route::get('/application/{id}', function ($id) {
+        $correction = AttendanceCorrection::find($id);
+
+        if (!$correction) {
+            abort(404);
+        }
+
+        return redirect('/attendance/detail/' . $correction->attendance_id . '?status=' . $correction->approval_status->value);
     });
 });
 

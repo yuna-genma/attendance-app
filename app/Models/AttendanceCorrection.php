@@ -25,7 +25,7 @@ class AttendanceCorrection extends Model
     ];
 
     protected $casts = [
-        'status' => CorrectionStatus::class,
+        'approval_status' => CorrectionStatus::class,
     ];
 
     public function user(): BelongsTo
