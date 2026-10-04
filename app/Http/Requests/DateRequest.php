@@ -16,7 +16,7 @@ class DateRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'date' => 'nullable|date_format:Y-m-d',
+            'date' => 'nullable|date',
         ];
     }
 
@@ -24,7 +24,7 @@ class DateRequest extends FormRequest
     {
         if ($this->filled('date')) {
             $this->merge([
-                'validated_date' => Carbon::parse($this->query('date'))->startOfDay(),
+                'validated_date' => Carbon::parse($this->input('date'))->startOfDay(),
             ]);
         } else {
             $this->merge([

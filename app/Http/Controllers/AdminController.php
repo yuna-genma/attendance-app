@@ -13,22 +13,22 @@ class AdminController extends Controller
 {
     public function attendanceIndex(DateRequest $request)
     {
+        if (!auth()->user()->admin_status) {
+            abort(403, 'このデータを閲覧する権限がありません');
+        }
+
         $date = $request->input('validated_date');
 
-        $previousDay = $date->copy()->subDay();
-        $nextDay = $date->copy()->addDay();
+        $previousDay = $date->copy()->startOfDay()->subDay();
+        $nextDay = $date->copy()->startOfDay()->addDay();
 
         $targetDate = $date->format('Y-m-d');
 
-        $generalUserIds = User::where('admin_status', false)->pluck('id');
-
         $attendanceRecords = Attendance::with('rests')
             ->whereDate('date', $targetDate)
-            ->whereIn('user_id', $generalUserIds)
             ->get();
 
-        $activeUserIds = $attendanceRecords->pluck('user_id')->unique();
-        $users = User::whereIn('id', $activeUserIds)->get();
+        $users = User::all();
 
 
         return view('admin.admin-attendance-list', compact(
@@ -50,9 +50,6 @@ class AdminController extends Controller
         $user = $attendance->user;
 
         $adminId = auth()->id();
-        if (!auth()->user()->admin_status) {
-            abort(403, 'この勤怠データを閲覧する権限がありません');
-        }
 
         $breaks = $attendance->rests->map(function ($rest) {
             return [
@@ -94,12 +91,20 @@ class AdminController extends Controller
 
     public function staffIndex()
     {
+        if (!auth()->user()->admin_status) {
+            abort(403, 'このデータを閲覧する権限がありません');
+        }
+
         $users = User::all();
         return view('admin.staff-list', compact('users'));
     }
 
     public function staffShow(MonthRequest $request, $id)
     {
+        if (!auth()->user()->admin_status) {
+            abort(403, 'このデータを閲覧する権限がありません');
+        }
+
         $user = User::findOrFail($id);
 
         $date = $request->input('validated_date');

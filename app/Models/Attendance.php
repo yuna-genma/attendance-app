@@ -10,7 +10,6 @@ use App\Enums\AttendanceStatus;
 use App\Models\User;
 use App\Models\AttendanceCorrection;
 use App\Models\Rest;
-use App\Enums\CorrectionStatus;
 use Illuminate\Support\Facades\DB;
 
 class Attendance extends Model
@@ -48,16 +47,16 @@ class Attendance extends Model
     {
         return Attribute::get(function ($value) {
             if (!$value)
-                return '';
+                return null;
 
-            return Carbon::parse($value)->locale('ja')->isoFormat('MM/DD(ddd)');
+            return Carbon::parse($value)->locale('ja');
         });
     }
 
     protected function dateObject(): Attribute
     {
         return Attribute::get(function ($value, $attributes) {
-            $rawValue = $attributes['date'] ?? null;
+            $rawValue = $this->getRawOriginal('date');
             if (!$rawValue)
                 return null;
             return Carbon::parse($rawValue)->locale('ja');
@@ -134,7 +133,7 @@ class Attendance extends Model
             $correction = $this->attendanceCorrections()->create([
                 'user_id' => $this->user_id,
                 'approved_by' => auth()->id(),
-                'approval_status' => CorrectionStatus::APPROVED->value,
+                'approval_status' => '承認済み',
                 'new_clock_in' => $input['new_clock_in'],
                 'new_clock_out' => $input['new_clock_out'],
                 'comment' => $input['comment'] ?? ' ',

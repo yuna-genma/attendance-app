@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\AttendanceCorrectionRequest;
 use App\Models\Attendance;
-use App\Enums\CorrectionStatus;
 use App\Models\AttendanceCorrection;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
@@ -34,7 +33,7 @@ class UserCorrectionRequestController extends Controller
                 ->first();
         }
 
-        $attendanceDate = $attendance->date_object;
+        $attendanceDate = $attendance->dateObject;
 
         $data = [
             'id' => $attendance->id,
@@ -44,7 +43,7 @@ class UserCorrectionRequestController extends Controller
             'clock_out' => $attendance->clock_out,
             'comment' => $correction ? $correction->comment : null,
             'breaks' => $breaks,
-            'application' => ($statusValue === CorrectionStatus::PENDING->value) ? $correction : null,
+            'application' => ($statusValue === '承認待ち') ? $correction : null,
         ];
 
         return view('user.user-detail', compact('user', 'data'));
@@ -57,7 +56,7 @@ class UserCorrectionRequestController extends Controller
         $validated = $request->validated();
 
         DB::transaction(function () use ($validated, $attendance) {
-            $baseDate = $attendance->date_object->format('Y-m-d');
+            $baseDate = $attendance->dateObject->format('Y-m-d');
 
             $correction = $attendance->attendanceCorrections()->create([
                 'user_id' => auth()->id(),
@@ -65,7 +64,7 @@ class UserCorrectionRequestController extends Controller
                 'new_clock_in' => Carbon::parse($baseDate . ' ' . $validated['new_clock_in']),
                 'new_clock_out' => Carbon::parse($baseDate . ' ' . $validated['new_clock_out']),
                 'comment' => $validated['comment'] ?? null,
-                'approval_status' => CorrectionStatus::PENDING->value,
+                'approval_status' => '承認待ち',
             ]);
 
             if (!empty($validated['new_break_in']) && is_array($validated['new_break_in'])) {
@@ -102,7 +101,7 @@ class UserCorrectionRequestController extends Controller
         $formattedApplications = $corrections->map(function ($correction) {
             return [
                 'id' => $correction->id,
-                'approval_status' => $correction->approval_status->value,
+                'approval_status' => $correction->approval_status,
                 'date' => $correction->attendance->date_object->format('Y/m/d'),
                 'comment' => $correction->comment,
                 'application_date' => $correction->created_at->format('Y/m/d'),

@@ -4,7 +4,6 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use App\Enums\CorrectionStatus;
 use App\Models\Attendance;
 use App\Models\User;
 use App\Models\RestCorrection;
@@ -24,10 +23,6 @@ class AttendanceCorrection extends Model
         'approval_status',
     ];
 
-    protected $casts = [
-        'approval_status' => CorrectionStatus::class,
-    ];
-
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class, 'user_id');
@@ -40,7 +35,7 @@ class AttendanceCorrection extends Model
 
     public function attendance()
     {
-        return $this->belongsTo(Attendance::class);
+        return $this->belongsTo(Attendance::class, 'attendance_id');
     }
 
     public function restCorrections()
