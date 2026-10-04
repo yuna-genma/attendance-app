@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\AdminCorrectionRequestController;
 use App\Http\Controllers\AttendanceController;
 use App\Http\Controllers\UserCorrectionRequestController;
 use App\Http\Controllers\AdminAuthController;
@@ -45,7 +46,13 @@ Route::middleware(['web', 'auth:web'])->group(function () {
         }
         return app(UserCorrectionRequestController::class)->store($request, $id);
     });
-    Route::get('/stamp_correction_request/list', [UserCorrectionRequestController::class, 'userApplicationIndex']);
+    Route::get('/stamp_correction_request/list', function () {
+        if (auth()->check() && auth()->user()->admin_status) {
+            return app(AdminCorrectionRequestController::class)->adminApplicationIndex();
+        }
+        return app(UserCorrectionRequestController::class)->userApplicationIndex();
+    });
+
     Route::get('/application/{id}', function ($id) {
         $correction = AttendanceCorrection::find($id);
 
@@ -53,7 +60,7 @@ Route::middleware(['web', 'auth:web'])->group(function () {
             abort(404);
         }
 
-        return redirect('/attendance/detail/' . $correction->attendance_id . '?status=' . $correction->approval_status->value);
+        return redirect('/attendance/detail/' . $correction->attendance_id . '?status=' . $correction->approval_status);
     });
 });
 
@@ -64,4 +71,6 @@ Route::middleware(['auth', 'auth:web', 'admin.check'])->group(function () {
     Route::post('/admin/attendance/{id}', [AdminController::class, 'update']);
     Route::get('/admin/staff/list', [AdminController::class, 'staffIndex']);
     Route::get('/admin/attendance/staff/{id}', [AdminController::class, 'staffShow']);
+    Route::get('/stamp_correction_request/approve/{attendance_correct_request_id}', [AdminCorrectionRequestController::class, 'showApplication']);
+    Route::post('/stamp_correction_request/approve/{attendance_correct_request_id}', [AdminCorrectionRequestController::class, 'approve']);
 });

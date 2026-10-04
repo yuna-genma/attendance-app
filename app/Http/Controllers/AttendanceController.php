@@ -74,18 +74,30 @@ class AttendanceController extends Controller
         $previousMonth = $date->copy()->subMonth()->format('Y-m');
         $nextMonth = $date->copy()->addMonth()->format('Y-m');
 
-        $formattedAttendanceRecords = Attendance::with('rests')
+        $attendanceRecords = Attendance::with('rests')
             ->where('user_id', $user->id)
             ->whereYear('date', $date->year)
             ->whereMonth('date', $date->month)
             ->oldest('date')
             ->get();
 
-        return view('user.user-attendance-list', compact(
-            'formattedAttendanceRecords',
-            'date',
-            'previousMonth',
-            'nextMonth'
-        ));
+        $formattedAttendanceRecords = $attendanceRecords->map(function ($attendanceRecord) {
+            return [
+                'id' => $attendanceRecord->id,
+                'date' => $attendanceRecord->date->isoFormat('MM/DD(ddd)'),
+                'clock_in' => $attendanceRecord->clock_in,
+                'clock_out' => $attendanceRecord->clock_out,
+                'total_break_time' => $attendanceRecord->totalBreakTime,
+                'total_time' => $attendanceRecord->totalTime,
+            ];
+        });
+
+        return
+            view('user.user-attendance-list', compact(
+                'formattedAttendanceRecords',
+                'date',
+                'previousMonth',
+                'nextMonth'
+            ));
     }
 }

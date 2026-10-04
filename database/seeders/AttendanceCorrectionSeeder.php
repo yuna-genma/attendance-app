@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use App\Enums\CorrectionStatus;
 use App\Models\Attendance;
 use App\Models\AttendanceCorrection;
+use Carbon\Carbon;
 use Illuminate\Database\Seeder;
 use App\Models\User;
 
@@ -12,15 +13,20 @@ class AttendanceCorrectionSeeder extends Seeder
 {
     public function run(): void
     {
-        $attendances = Attendance::all();
-
         $admins = User::where('admin_status', true)->get();
 
-        foreach ($attendances as $attendance) {
-            if (fake()->boolean(30)) {
-                $status = fake()->randomElement(CorrectionStatus::cases())->value;
+        $attendanceGroups = Attendance::all()->groupBy(function ($attendance) {
+            return $attendance->dateObject?->format('Y-m') ?? 'unknown';
+        });
 
-                $approvedBy = ($status === CorrectionStatus::PENDING->value)
+        foreach ($attendanceGroups as $month => $attendances) {
+            $count = min(3, $attendances->count());
+            $selectedAttendances = $attendances->random($count);
+
+            foreach ($selectedAttendances as $attendance) {
+                $status = fake()->randomElement(['承認待ち', '承認済み']);
+
+                $approvedBy = ($status === '承認待ち')
                     ? null
                     : $admins->random()?->id;
 
@@ -31,6 +37,8 @@ class AttendanceCorrectionSeeder extends Seeder
                     'approval_status' => $status,
                 ]);
             }
+
+
         }
     }
 }
