@@ -16,7 +16,7 @@ use Illuminate\Http\Request;
 Route::middleware(['web', 'guest'])->group(function () {
     Route::get('/login', [AuthenticatedSessionController::class, 'create'])->name('user.login');
     Route::post('/login', [AuthenticatedSessionController::class, 'store']);
-    Route::get('/register', [RegisteredUserController::class, 'create']);
+    Route::get('/register', [RegisteredUserController::class, 'create'])->name('register');
     Route::post('/register', [RegisteredUserController::class, 'store']);
 
     Route::get('/admin/login', [AdminAuthController::class, 'create'])->name('admin.login');

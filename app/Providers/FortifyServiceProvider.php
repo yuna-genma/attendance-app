@@ -14,10 +14,11 @@ use Illuminate\Support\Str;
 use Laravel\Fortify\Actions\RedirectIfTwoFactorAuthenticatable;
 use Laravel\Fortify\Fortify;
 use Illuminate\Support\Facades\Hash;
-use App\Models\Admin;
 use App\Models\User;
 use Laravel\Fortify\Contracts\LoginResponse;
 use Laravel\Fortify\Contracts\LogoutResponse;
+use Laravel\Fortify\Contracts\RegisterResponse as RegisterResponseContract;
+
 
 class FortifyServiceProvider extends ServiceProvider
 {
@@ -56,17 +57,13 @@ class FortifyServiceProvider extends ServiceProvider
         });
 
         Fortify::authenticateUsing(function (Request $request) {
-            if ($request->is('admin*')) {
-                $admin = Admin::where('email', $request->email)->first();
-                if ($admin && Hash::check($request->password, $admin->password)) {
-                    config(['auth.defaults.guard' => 'admin']);
-                    return $admin;
+            $user = User::where('email', $request->email)->first();
+
+            if ($user && Hash::check($request->password, $user->password)) {
+                if ($request->is('admin*')) {
+                    return $user->admin_status ? $user : null;
                 }
-            } else {
-                $user = User::where('email', $request->email)->first();
-                if ($user && Hash::check($request->password, $user->password)) {
-                    return $user;
-                }
+                return $user;
             }
             return null;
         });
@@ -74,7 +71,9 @@ class FortifyServiceProvider extends ServiceProvider
         $this->app->instance(LoginResponse::class, new class implements LoginResponse {
             public function toResponse($request)
             {
-                $redirectUrl = $request->is('admin*') ? '/admin/attendance/list' : '/attendance';
+                $user = auth()->user();
+                $isAdmin = ($user && $user->admin_status) || $request->is('admin*');
+                $redirectUrl = $isAdmin ? '/admin/attendance/list' : '/attendance';
                 return redirect()->intended($redirectUrl);
             }
         });
@@ -87,6 +86,16 @@ class FortifyServiceProvider extends ServiceProvider
                     : redirect('/login');
             }
         });
+
+        $this->app->singleton(RegisterResponseContract::class, function () {
+            return new class implements RegisterResponseContract {
+                public function toResponse($request)
+                {
+                    return redirect('/attendance');
+                }
+            };
+        });
+
     }
 
 }
