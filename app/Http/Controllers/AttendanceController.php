@@ -57,7 +57,7 @@ class AttendanceController extends Controller
             ->where('date', $today)
             ->firstOrFail();
 
-        $attendance->prrcessAction($action, $nowTime);
+        $attendance->processAction($action, $nowTime);
 
         return redirect()->back();
     }

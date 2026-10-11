@@ -72,9 +72,10 @@ class FortifyServiceProvider extends ServiceProvider
             public function toResponse($request)
             {
                 $user = auth()->user();
-                $isAdmin = ($user && $user->admin_status) || $request->is('admin*');
+
+                $isAdmin = $request->is('admin*') && ($user && $user->admin_status);
                 $redirectUrl = $isAdmin ? '/admin/attendance/list' : '/attendance';
-                return redirect()->intended($redirectUrl);
+                return redirect($redirectUrl);
             }
         });
 
