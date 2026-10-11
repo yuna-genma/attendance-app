@@ -15,12 +15,12 @@ class UpdateAttendanceRequest extends FormRequest
     {
         return [
             'new_clock_in' => 'required|date_format:H:i',
-            'new_clock_out' => 'nullable|date_format:H:i|after:new_clock_in',
+            'new_clock_out' => 'nullable|date_format:H:i',
             'new_break_in' => 'nullable|array',
             'new_break_out' => 'nullable|array',
             'new_break_in.*' => 'nullable|date_format:H:i',
             'new_break_out.*' => 'nullable|date_format:H:i',
-            'comment' => 'nullable|string|max:255',
+            'comment' => 'required|string|max:255',
         ];
     }
 
@@ -28,11 +28,18 @@ class UpdateAttendanceRequest extends FormRequest
     {
         return [
             function ($validator) {
+                if ($validator->errors()->any()) {
+                    return;
+                }
+
                 $clockIn = $this->input('new_clock_in');
                 $clockOut = $this->input('new_clock_out');
 
-                if (!$clockIn) {
-                    return;
+                if ($clockOut && $clockIn > $clockOut) {
+                    $validator->errors()->add(
+                        'new_clock_in',
+                        '出勤時間が不適切な値です'
+                    );
                 }
 
                 $breakIns = $this->input('new_break_in', []);
@@ -51,31 +58,33 @@ class UpdateAttendanceRequest extends FormRequest
                     if ($breakIn < $clockIn) {
                         $validator->errors()->add(
                             "new_break_in.{$index}",
-                            "休憩開始時間は出勤時間({$clockIn})以降の時間を入力してください"
+                            "休憩時間が不適切な値です"
                         );
-                        if ($clockOut) {
-                            if ($breakIn > $clockOut) {
-                                $validator->errors()->add(
-                                    "new_break_in.{$index}",
-                                    "休憩開始時間は退勤時間({$clockOut})より前の時間を入力してください",
-                                );
-                            }
-                            if ($breakOut && $breakOut > $clockOut) {
-                                $validator->errors()->add(
-                                    "new_break_out.{$index}",
-                                    "休憩終了時間は退勤時間({$clockOut})より前の時間を入力してください"
-                                );
-                            }
-                            if ($breakOut && $breakOut < $breakIn) {
-                                $validator->errors()->add(
-                                    "new_break_out.{$index}",
-                                    "休憩終了時間は休憩開始時間({$breakIn})以降の時間を入力してください"
-                                );
-                            }
+                    }
+
+                    if ($clockOut) {
+                        if ($breakIn > $clockOut) {
+                            $validator->errors()->add(
+                                "new_break_in.{$index}",
+                                "休憩時間が不適切な値です",
+                            );
+                        }
+                        if ($breakOut && $breakOut > $clockOut) {
+                            $validator->errors()->add(
+                                "new_break_out.{$index}",
+                                "休憩時間もしくは退勤時間が不適切な値です"
+                            );
                         }
                     }
                 }
             }
+        ];
+    }
+
+    public function messages(): array
+    {
+        return [
+            'comment.required' => '備考を記入してください'
         ];
     }
 }

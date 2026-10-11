@@ -5,6 +5,7 @@ use App\Http\Controllers\AdminCorrectionRequestController;
 use App\Http\Controllers\AttendanceController;
 use App\Http\Controllers\UserCorrectionRequestController;
 use App\Http\Controllers\AdminAuthController;
+use App\Http\Requests\AttendanceCorrectionRequest;
 use App\Http\Requests\UpdateAttendanceRequest;
 use App\Models\AttendanceCorrection;
 use Illuminate\Support\Facades\Route;
@@ -30,30 +31,23 @@ Route::middleware(['web', 'auth:web'])->group(function () {
     Route::post('/attendance', [AttendanceController::class, 'store']);
     Route::get('/attendance/list', [AttendanceController::class, 'userAttendanceIndex']);
 
-    Route::get('/attendance/{id}', function ($id) {
-        if (auth()->check() && auth()->user()->admin_status) {
+    Route::get('/attendance/{id}', function (Request $request, $id) {
+        if ($request->is('admin*') || str_contains($request->header('referer'), '/admin/')) {
             return redirect('/admin/attendance/' . $id);
         }
         return redirect('/attendance/detail/' . $id);
     });
     Route::get('/attendance/detail/{id}', [UserCorrectionRequestController::class, 'create']);
-    Route::post('/attendance/{id}', function (Request $request, $id) {
-        if (auth()->check() && auth()->user()->admin_status) {
-            return app(AdminController::class)->update(
-                app(UpdateAttendanceRequest::class),
-                $id
-            );
-        }
-        return app(UserCorrectionRequestController::class)->store($request, $id);
-    });
-    Route::get('/stamp_correction_request/list', function () {
-        if (auth()->check() && auth()->user()->admin_status) {
+    Route::post('/attendance/{id}', [UserCorrectionRequestController::class, 'store'])
+        ->middleware('route.attendance');
+    Route::get('/stamp_correction_request/list', function (Request $request) {
+        if (auth()->check() && auth()->user()->admin_status && str_contains($request->header('referer'), '/admin/')) {
             return app(AdminCorrectionRequestController::class)->adminApplicationIndex();
         }
         return app(UserCorrectionRequestController::class)->userApplicationIndex();
     });
 
-    Route::get('/application/{id}', function ($id) {
+    Route::get('/application/{id}', function (Request $request, $id) {
         $correction = AttendanceCorrection::find($id);
 
         if (!$correction) {
