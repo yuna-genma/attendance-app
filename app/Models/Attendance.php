@@ -53,15 +53,6 @@ class Attendance extends Model
         });
     }
 
-    protected function dateObject(): Attribute
-    {
-        return Attribute::get(function ($value, $attributes) {
-            $rawValue = $this->getRawOriginal('date');
-            if (!$rawValue)
-                return null;
-            return Carbon::parse($rawValue)->locale('ja');
-        });
-    }
     protected function clockIn(): Attribute
     {
         return Attribute::get(fn($value) => $value ? Carbon::parse($value)->format('H:i') : '');

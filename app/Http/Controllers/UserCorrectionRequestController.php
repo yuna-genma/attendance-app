@@ -18,10 +18,15 @@ class UserCorrectionRequestController extends Controller
 
         $breaks = $attendance->rests->map(function ($rest) {
             return [
-                'break_in' => $rest->break_in ? Carbon::parse($rest->break_in)->format('H:i') : '',
-                'break_out' => $rest->break_out ? Carbon::parse($rest->break_out)->format('H:i') : '',
+                'break_in' => $rest->break_in,
+                'break_out' => $rest->break_out,
             ];
         })->toArray();
+
+        $pendingCorrection = $attendance->attendanceCorrections()
+            ->where('approval_status', '承認待ち')
+            ->latest()
+            ->first();
 
         $statusValue = $request->query('status');
 
@@ -33,7 +38,17 @@ class UserCorrectionRequestController extends Controller
                 ->first();
         }
 
-        $attendanceDate = $attendance->dateObject;
+        if ($pendingCorrection) {
+            $correction = $pendingCorrection;
+        }
+
+        $attendanceDate = $attendance->date;
+
+        $commentMessage = '';
+        if ($pendingCorrection) {
+            $commentMessage = "【承認待ちのため修正はできません】\n";
+        }
+        $displayComment = $correction ? $commentMessage . $correction->comment : null;
 
         $data = [
             'id' => $attendance->id,
@@ -41,9 +56,9 @@ class UserCorrectionRequestController extends Controller
             'date' => $attendanceDate->format('m月d日'),
             'clock_in' => $attendance->clock_in,
             'clock_out' => $attendance->clock_out,
-            'comment' => $correction ? $correction->comment : null,
+            'comment' => $displayComment,
             'breaks' => $breaks,
-            'application' => ($statusValue === '承認待ち') ? $correction : null,
+            'application' => $pendingCorrection ?: (($statusValue === '承認待ち') ? $correction : null),
         ];
 
         return view('user.user-detail', compact('user', 'data'));
@@ -53,10 +68,18 @@ class UserCorrectionRequestController extends Controller
     {
         $attendance = Attendance::with('rests')->findOrFail($id);
 
+        $hasPending = $attendance->attendanceCorrections()
+            ->where('approval_status', '承認待ち')
+            ->exists();
+
+        if ($hasPending) {
+            return redirect()->back()->with('error', '承認待ちのため修正はできません。');
+        }
+
         $validated = $request->validated();
 
         DB::transaction(function () use ($validated, $attendance) {
-            $baseDate = $attendance->dateObject->format('Y-m-d');
+            $baseDate = $attendance->date->format('Y-m-d');
 
             $correction = $attendance->attendanceCorrections()->create([
                 'user_id' => auth()->id(),
@@ -102,7 +125,7 @@ class UserCorrectionRequestController extends Controller
             return [
                 'id' => $correction->id,
                 'approval_status' => $correction->approval_status,
-                'date' => $correction->attendance->date_object->format('Y/m/d'),
+                'date' => $correction->attendance->date->format('Y/m/d'),
                 'comment' => $correction->comment,
                 'application_date' => $correction->created_at->format('Y/m/d'),
             ];
