@@ -22,9 +22,9 @@ class AdminCorrectionRequestController extends Controller
 
         $applications->each(function ($application) {
             if ($application->attendance) {
-
                 $application->setRelation('AttendanceRecord', $application->attendance);
             }
+            $application->application_date = $application->created_at;
         });
 
         return view('admin.admin-application-list', compact('applications'));

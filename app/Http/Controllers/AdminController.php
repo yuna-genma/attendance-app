@@ -58,7 +58,7 @@ class AdminController extends Controller
             ];
         })->toArray();
 
-        $attendanceDate = $attendance->date_object;
+        $attendanceDate = $attendance->date;
 
         $attendanceRecord = [
             'id' => $attendance->id,
@@ -95,7 +95,7 @@ class AdminController extends Controller
             abort(403, 'このデータを閲覧する権限がありません');
         }
 
-        $users = User::all();
+        $users = User::where('admin_status', false)->get();
         return view('admin.staff-list', compact('users'));
     }
 
@@ -122,7 +122,7 @@ class AdminController extends Controller
         $formattedAttendanceRecords = $attendanceRecords->map(function ($record) {
             return [
                 'id' => $record->id,
-                'date' => $record->date,
+                'date' => $record->date->isoFormat('MM/DD(ddd)'),
                 'clock_in' => $record->clock_in ?: ' ',
                 'clock_out' => $record->clock_out ?: ' ',
                 'total_break_time' => $record->total_break_time,
