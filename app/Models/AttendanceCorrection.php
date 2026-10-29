@@ -8,6 +8,7 @@ use App\Models\Attendance;
 use App\Models\User;
 use App\Models\RestCorrection;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class AttendanceCorrection extends Model
 {
@@ -33,12 +34,12 @@ class AttendanceCorrection extends Model
         return $this->belongsTo(User::class, 'approved_by');
     }
 
-    public function attendance()
+    public function attendance(): BelongsTo
     {
         return $this->belongsTo(Attendance::class, 'attendance_id');
     }
 
-    public function restCorrections()
+    public function restCorrections(): HasMany
     {
         return $this->hasMany(RestCorrection::class);
     }

@@ -10,6 +10,8 @@ use App\Enums\AttendanceStatus;
 use App\Models\User;
 use App\Models\AttendanceCorrection;
 use App\Models\Rest;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Facades\DB;
 
 class Attendance extends Model
@@ -28,17 +30,17 @@ class Attendance extends Model
         'attendance_status' => AttendanceStatus::class,
     ];
 
-    public function user()
+    public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }
 
-    public function rests()
+    public function rests(): HasMany
     {
         return $this->hasMany(Rest::class);
     }
 
-    public function attendanceCorrections()
+    public function attendanceCorrections(): HasMany
     {
         return $this->hasMany(AttendanceCorrection::class);
     }
@@ -68,7 +70,7 @@ class Attendance extends Model
         return Attribute::make(
             get: function () {
                 $totalMinutes = 0;
-                $rests = $this->rests()->get();
+                $rests = $this->rests;
                 foreach ($rests as $rest) {
                     if ($rest->break_in && $rest->break_out) {
                         $in = Carbon::parse($rest->break_in);

@@ -4,16 +4,18 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\AdminLoginRequest;
 use Auth;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Contracts\View\View;
 
 class AdminAuthController extends Controller
 {
-    public function create()
+    public function create(): View
     {
         return view('admin.admin-login');
     }
 
-    public function store(AdminLoginRequest $request)
+    public function store(AdminLoginRequest $request): RedirectResponse
     {
         $validated = $request->validated();
         $credentials = [
@@ -34,7 +36,7 @@ class AdminAuthController extends Controller
         return back()->withErrors(['email' => 'ログイン情報が登録されていません']);
     }
 
-    public function destroy(Request $request)
+    public function destroy(Request $request): RedirectResponse
     {
         Auth::logout();
 

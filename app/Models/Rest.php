@@ -8,6 +8,8 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Attendance;
 use App\Models\RestCorrection;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Rest extends Model
 {
@@ -19,12 +21,12 @@ class Rest extends Model
         'break_out',
     ];
 
-    public function attendances()
+    public function attendances(): BelongsTo
     {
         return $this->belongsTo(Attendance::class);
     }
 
-    public function restCorrections()
+    public function restCorrections(): HasMany
     {
         return $this->hasMany(RestCorrection::class);
     }

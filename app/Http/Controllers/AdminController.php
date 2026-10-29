@@ -8,10 +8,15 @@ use App\Models\Attendance;
 use App\Models\AttendanceCorrection;
 use App\Http\Requests\DateRequest;
 use App\Models\User;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
+use Illuminate\Contracts\View\View;
+use Symfony\Component\HttpFoundation\StreamedResponse;
+use Carbon\Carbon;
 
 class AdminController extends Controller
 {
-    public function attendanceIndex(DateRequest $request)
+    public function attendanceIndex(DateRequest $request): View
     {
         if (!auth()->user()->admin_status) {
             abort(403, 'このデータを閲覧する権限がありません');
@@ -40,7 +45,7 @@ class AdminController extends Controller
         ));
     }
 
-    public function show($id)
+    public function show($id): View
     {
         if (!auth()->user()->admin_status) {
             abort(403, 'この勤怠データを閲覧する権限がありません');
@@ -76,7 +81,7 @@ class AdminController extends Controller
         ));
     }
 
-    public function update(UpdateAttendanceRequest $request, $id)
+    public function update(UpdateAttendanceRequest $request, $id): RedirectResponse
     {
         if (!auth()->user()->admin_status) {
             abort(403, 'この操作を行う権限がありません');
@@ -89,7 +94,7 @@ class AdminController extends Controller
         return redirect('/admin/attendance/list');
     }
 
-    public function staffIndex()
+    public function staffIndex(): View
     {
         if (!auth()->user()->admin_status) {
             abort(403, 'このデータを閲覧する権限がありません');
@@ -99,7 +104,7 @@ class AdminController extends Controller
         return view('admin.staff-list', compact('users'));
     }
 
-    public function staffShow(MonthRequest $request, $id)
+    public function staffShow(MonthRequest $request, $id): View
     {
         if (!auth()->user()->admin_status) {
             abort(403, 'このデータを閲覧する権限がありません');
@@ -138,5 +143,55 @@ class AdminController extends Controller
             'previousMonth',
             'nextMonth'
         ));
+    }
+
+    public function exportCsv(Request $request): StreamedResponse
+    {
+        if (!auth()->user()->admin_status) {
+            abort(403, 'このデータを閲覧する権限がありません');
+        }
+
+        $user = User::findOrFail($request->input('user_id'));
+
+        $date = Carbon::parse($request->input('year_month'));
+
+        $attendanceRecords = Attendance::with('rests')
+            ->where('user_id', $user->id)
+            ->whereYear('date', $date->year)
+            ->whereMonth('date', $date->month)
+            ->oldest('date')
+            ->get();
+
+        $fileName = sprintf('%sさんの勤怠_%s.csv', $user->name, $date->format('Y-m'));
+        $headers = [
+            'Content-Type' => 'text/csv',
+            'Content-Disposition' => "attachment; filename=\"{$fileName}\"",
+            'Pragma' => 'no-cache',
+            'Cache-Control' => 'must-revalidate, post-check=0, pre-check=0',
+            'Expires' => '0',
+        ];
+
+        return response()->stream(function () use ($attendanceRecords) {
+            $file = fopen('php://output', 'w');
+
+            fwrite($file, pack('C*', 0xEF, 0xBB, 0xBF));
+
+            fputcsv($file, ['日付', '出勤', '退勤', '休憩', '合計']);
+
+            foreach ($attendanceRecords as $record) {
+                $breakTime = $record->total_break_time ? Carbon::parse($record->total_break_time)->format('G:i') : '';
+                $totalTime = $record->total_time ? Carbon::parse($record->total_time)->format('G:i') : '';
+
+                fputcsv($file, [
+                    $record->date->isoFormat('MM/DD(ddd)'),
+                    $record->clock_in ?: '',
+                    $record->clock_out ?: '',
+                    $breakTime,
+                    $totalTime,
+                ]);
+            }
+
+            fclose($file);
+        }, 200, $headers);
     }
 }

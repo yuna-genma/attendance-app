@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\AttendanceCorrection;
 use App\Models\Rest;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class RestCorrection extends Model
 {
@@ -18,12 +19,12 @@ class RestCorrection extends Model
         'new_break_out',
     ];
 
-    public function attendanceCorrection()
+    public function attendanceCorrection(): BelongsTo
     {
         return $this->belongsTo(AttendanceCorrection::class);
     }
 
-    public function originalRest()
+    public function originalRest(): BelongsTo
     {
         return $this->belongsTo(Rest::class);
     }

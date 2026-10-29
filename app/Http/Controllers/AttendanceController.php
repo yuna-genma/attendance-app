@@ -6,11 +6,13 @@ use App\Enums\AttendanceStatus;
 use App\Http\Requests\AttendanceActionRequest;
 use App\Http\Requests\UserAttendanceIndexRequest;
 use App\Models\Attendance;
+use Illuminate\Contracts\View\View;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Carbon;
 class AttendanceController extends Controller
 {
 
-    public function create()
+    public function create(): View
     {
         $user = auth()->user();
         $now = Carbon::now('Asia/Tokyo');
@@ -34,7 +36,7 @@ class AttendanceController extends Controller
         ));
     }
 
-    public function store(AttendanceActionRequest $request)
+    public function store(AttendanceActionRequest $request): RedirectResponse
     {
         $user = auth()->user();
         $action = $request->input('action');
@@ -62,7 +64,7 @@ class AttendanceController extends Controller
         return redirect()->back();
     }
 
-    public function userAttendanceIndex(UserAttendanceIndexRequest $request)
+    public function userAttendanceIndex(UserAttendanceIndexRequest $request): View
     {
         $validated = $request->validated();
 

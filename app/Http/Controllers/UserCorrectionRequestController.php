@@ -6,12 +6,14 @@ use App\Http\Requests\AttendanceCorrectionRequest;
 use App\Models\Attendance;
 use App\Models\AttendanceCorrection;
 use Carbon\Carbon;
+use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 
 class UserCorrectionRequestController extends Controller
 {
-    public function create(Request $request, $id)
+    public function create(Request $request, $id): View
     {
         $attendance = Attendance::with('rests')->findOrFail($id);
         $user = auth()->user();
@@ -64,7 +66,7 @@ class UserCorrectionRequestController extends Controller
         return view('user.user-detail', compact('user', 'data'));
     }
 
-    public function store(AttendanceCorrectionRequest $request, $id)
+    public function store(AttendanceCorrectionRequest $request, $id): RedirectResponse
     {
         $attendance = Attendance::with('rests')->findOrFail($id);
 
@@ -112,7 +114,7 @@ class UserCorrectionRequestController extends Controller
         return redirect('/attendance/list');
     }
 
-    public function userApplicationIndex()
+    public function userApplicationIndex(): View
     {
         $user = auth()->user();
 
