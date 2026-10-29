@@ -2,12 +2,10 @@
 
 namespace Database\Seeders;
 
-use App\Enums\CorrectionStatus;
 use App\Models\Attendance;
 use App\Models\AttendanceCorrection;
-use Carbon\Carbon;
-use Illuminate\Database\Seeder;
 use App\Models\User;
+use Illuminate\Database\Seeder;
 
 class AttendanceCorrectionSeeder extends Seeder
 {
@@ -37,7 +35,6 @@ class AttendanceCorrectionSeeder extends Seeder
                     'approval_status' => $status,
                 ]);
             }
-
 
         }
     }

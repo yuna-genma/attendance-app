@@ -2,11 +2,11 @@
 
 namespace Tests\Feature\Api\V1;
 
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Tests\TestCase;
-use App\Models\User;
 use App\Models\Attendance;
+use App\Models\User;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Laravel\Sanctum\Sanctum;
+use Tests\TestCase;
 
 class SanctumAuthenticationTest extends TestCase
 {
@@ -28,7 +28,7 @@ class SanctumAuthenticationTest extends TestCase
 
         $response->assertStatus(401);
         $response->assertJson([
-            'message' => 'Unauthenticated.'
+            'message' => 'Unauthenticated.',
         ]);
     }
 
@@ -57,7 +57,7 @@ class SanctumAuthenticationTest extends TestCase
 
         $response->assertStatus(401);
         $response->assertJson([
-            'message' => 'Unauthenticated.'
+            'message' => 'Unauthenticated.',
         ]);
     }
 
@@ -79,7 +79,7 @@ class SanctumAuthenticationTest extends TestCase
 
         $response->assertStatus(401);
         $response->assertJson([
-            'message' => 'Unauthenticated.'
+            'message' => 'Unauthenticated.',
         ]);
     }
 
@@ -162,7 +162,7 @@ class SanctumAuthenticationTest extends TestCase
 
         $response->assertStatus(403);
         $response->assertJson([
-            'error' => 'この操作を実行する権限がありません。'
+            'error' => 'この操作を実行する権限がありません。',
         ]);
     }
 
@@ -190,7 +190,7 @@ class SanctumAuthenticationTest extends TestCase
 
         $response->assertStatus(403);
         $response->assertJson([
-            'error' => 'この操作を実行する権限がありません。'
+            'error' => 'この操作を実行する権限がありません。',
         ]);
     }
 }

@@ -6,19 +6,18 @@ use App\Actions\Fortify\CreateNewUser;
 use App\Actions\Fortify\ResetUserPassword;
 use App\Actions\Fortify\UpdateUserPassword;
 use App\Actions\Fortify\UpdateUserProfileInformation;
+use App\Models\User;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Str;
 use Laravel\Fortify\Actions\RedirectIfTwoFactorAuthenticatable;
-use Laravel\Fortify\Fortify;
-use Illuminate\Support\Facades\Hash;
-use App\Models\User;
 use Laravel\Fortify\Contracts\LoginResponse;
 use Laravel\Fortify\Contracts\LogoutResponse;
 use Laravel\Fortify\Contracts\RegisterResponse as RegisterResponseContract;
-
+use Laravel\Fortify\Fortify;
 
 class FortifyServiceProvider extends ServiceProvider
 {
@@ -36,7 +35,7 @@ class FortifyServiceProvider extends ServiceProvider
         Fortify::redirectUserForTwoFactorAuthenticationUsing(RedirectIfTwoFactorAuthenticatable::class);
 
         RateLimiter::for('login', function (Request $request) {
-            $throttleKey = Str::transliterate(Str::lower($request->input(Fortify::username())) . '|' . $request->ip());
+            $throttleKey = Str::transliterate(Str::lower($request->input(Fortify::username())).'|'.$request->ip());
 
             return Limit::perMinute(5)->by($throttleKey);
         });
@@ -49,6 +48,7 @@ class FortifyServiceProvider extends ServiceProvider
             if (request()->is('admin*')) {
                 return view('admin.admin-login');
             }
+
             return view('user.user-login');
         });
 
@@ -63,23 +63,28 @@ class FortifyServiceProvider extends ServiceProvider
                 if ($request->is('admin*')) {
                     return $user->admin_status ? $user : null;
                 }
+
                 return $user;
             }
+
             return null;
         });
 
-        $this->app->instance(LoginResponse::class, new class implements LoginResponse {
+        $this->app->instance(LoginResponse::class, new class implements LoginResponse
+        {
             public function toResponse($request)
             {
                 $user = auth()->user();
 
                 $isAdmin = $request->is('admin*') && ($user && $user->admin_status);
                 $redirectUrl = $isAdmin ? '/admin/attendance/list' : '/attendance';
+
                 return redirect($redirectUrl);
             }
         });
 
-        $this->app->instance(LogoutResponse::class, new class implements LogoutResponse {
+        $this->app->instance(LogoutResponse::class, new class implements LogoutResponse
+        {
             public function toResponse($request)
             {
                 return $request->is('admin*')
@@ -89,7 +94,8 @@ class FortifyServiceProvider extends ServiceProvider
         });
 
         $this->app->singleton(RegisterResponseContract::class, function () {
-            return new class implements RegisterResponseContract {
+            return new class implements RegisterResponseContract
+            {
                 public function toResponse($request)
                 {
                     return redirect('/attendance');
@@ -101,5 +107,4 @@ class FortifyServiceProvider extends ServiceProvider
             return view('auth.verify-email');
         });
     }
-
 }

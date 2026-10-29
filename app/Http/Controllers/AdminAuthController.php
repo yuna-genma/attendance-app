@@ -4,9 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\AdminLoginRequest;
 use Auth;
+use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Contracts\View\View;
 
 class AdminAuthController extends Controller
 {
@@ -26,10 +26,12 @@ class AdminAuthController extends Controller
         if (Auth::attempt($credentials)) {
             if (Auth::user()->admin_status) {
                 $request->session()->regenerate();
+
                 return redirect()->intended('/admin/attendance/list');
             }
 
             Auth::logout();
+
             return back()->withErrors(['email' => '管理者権限がありません']);
         }
 

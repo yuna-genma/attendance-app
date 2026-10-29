@@ -2,9 +2,9 @@
 
 namespace App\Policies;
 
+use App\Models\Attendance;
 use App\Models\AttendanceCorrection;
 use App\Models\User;
-use App\Models\Attendance;
 
 class AttendanceRecordPolicy
 {

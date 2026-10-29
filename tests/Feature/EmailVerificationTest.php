@@ -2,12 +2,12 @@
 
 namespace Tests\Feature;
 
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Support\Facades\Notification;
-use Tests\TestCase;
 use App\Models\User;
 use Illuminate\Auth\Notifications\VerifyEmail;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\URL;
+use Tests\TestCase;
 
 class EmailVerificationTest extends TestCase
 {
@@ -26,7 +26,7 @@ class EmailVerificationTest extends TestCase
         ]);
 
         $this->assertDatabaseHas('users', [
-            'email' => 'test@example.com'
+            'email' => 'test@example.com',
         ]);
 
         $user = User::where('email', 'test@example.com')->first();
@@ -55,7 +55,7 @@ class EmailVerificationTest extends TestCase
     public function test_successful_email_verification_redirects_to_attendance_page(): void
     {
         $user = User::factory()->create([
-            'email_verified_at' => null
+            'email_verified_at' => null,
         ]);
 
         $verificationUrl = URL::temporarySignedRoute(
@@ -63,7 +63,7 @@ class EmailVerificationTest extends TestCase
             now()->addMinutes(60),
             [
                 'id' => $user->id,
-                'hash' => sha1($user->email)
+                'hash' => sha1($user->email),
             ]
         );
 

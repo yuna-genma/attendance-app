@@ -9,9 +9,9 @@ use App\Models\Attendance;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Carbon;
+
 class AttendanceController extends Controller
 {
-
     public function create(): View
     {
         $user = auth()->user();
@@ -52,6 +52,7 @@ class AttendanceController extends Controller
                 'clock_in' => $nowTime,
                 'attendance_status' => AttendanceStatus::WORKING,
             ]);
+
             return redirect()->back();
         }
 

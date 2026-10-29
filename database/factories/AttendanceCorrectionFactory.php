@@ -17,7 +17,7 @@ class AttendanceCorrectionFactory extends Factory
 
         $approvedBy = ($status === '承認待ち')
             ? null
-            : fn() => User::where('admin_status', true)->inRandomOrder()->first()?->id
+            : fn () => User::where('admin_status', true)->inRandomOrder()->first()?->id
                 ?? User::factory()->create(['admin_status' => true])->id;
 
         $clockInHour = fake()->numberBetween(7, 10);
@@ -27,10 +27,10 @@ class AttendanceCorrectionFactory extends Factory
         $clockOut = sprintf('%02d:%02d:00', $clockOutHour, fake()->numberBetween(0, 59));
 
         return [
-            'user_id' => fn() => User::where('admin_status', false)->inRandomOrder()->first()?->id
+            'user_id' => fn () => User::where('admin_status', false)->inRandomOrder()->first()?->id
                 ?? User::factory()->create(['admin_status' => false])->id,
             'approved_by' => $approvedBy,
-            'attendance_id' => fn() => Attendance::inRandomOrder()->first()?->id
+            'attendance_id' => fn () => Attendance::inRandomOrder()->first()?->id
                 ?? Attendance::factory()->create()->id,
             'approval_status' => $status,
             'new_clock_in' => $clockIn,
@@ -40,15 +40,16 @@ class AttendanceCorrectionFactory extends Factory
                 '修正あり',
                 '入力ミス',
                 '直行直帰',
-                '打刻忘れ'
+                '打刻忘れ',
             ]),
             'created_at' => fake()->dateTimeBetween('-1 month', 'now'),
             'updated_at' => function (array $attributes) use ($status) {
                 if ($status === '承認待ち') {
                     return $attributes['created_at'];
                 }
+
                 return fake()->dateTimeBetween($attributes['created_at'], 'now');
-            }
+            },
         ];
     }
 }

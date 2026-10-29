@@ -6,7 +6,6 @@ use Illuminate\Foundation\Http\FormRequest;
 
 class UserAttendanceIndexRequest extends FormRequest
 {
-
     public function authorize(): bool
     {
         return true;
@@ -15,7 +14,7 @@ class UserAttendanceIndexRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'date' => 'nullable|date_format:Y-m'
+            'date' => 'nullable|date_format:Y-m',
         ];
     }
 

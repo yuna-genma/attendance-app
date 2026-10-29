@@ -8,7 +8,6 @@ use Illuminate\Http\Resources\Json\JsonResource;
 
 class AttendanceRecordResource extends JsonResource
 {
-
     public function toArray(Request $request): array
     {
         $isDetail = $request->route() && ($request->route()->getActionMethod() === 'show' || preg_match('/\/api\/v1\/attendance-records\/\d+$/', $request->url()));
@@ -19,9 +18,9 @@ class AttendanceRecordResource extends JsonResource
         return [
             'id' => $this->id,
 
-            'user_id' => $this->when(!$isDetail, $this->user_id),
+            'user_id' => $this->when(! $isDetail, $this->user_id),
             'user_name' => $this->when(
-                !$isDetail,
+                ! $isDetail,
                 function () {
                     return $this->user?->name;
                 }
@@ -38,8 +37,8 @@ class AttendanceRecordResource extends JsonResource
             'clock_in' => $this->getRawOriginal('clock_in') ? Carbon::parse($this->getRawOriginal('clock_in'))->format('H:i:s') : null,
             'clock_out' => $this->getRawOriginal('clock_out') ? Carbon::parse($this->getRawOriginal('clock_out'))->format('H:i:s') : null,
 
-            'total_time' => $this->when(!$isDetail, $this->total_time),
-            'total_break_time' => $this->when(!$isDetail, $this->total_break_time),
+            'total_time' => $this->when(! $isDetail, $this->total_time),
+            'total_break_time' => $this->when(! $isDetail, $this->total_break_time),
 
             'breaks' => $this->whenLoaded('rests', function () {
                 return AttendanceBreakResource::collection($this->rests);

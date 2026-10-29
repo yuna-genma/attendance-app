@@ -18,6 +18,7 @@ class RedirectIfAuthenticated
                 if ($guard === 'admin') {
                     return redirect('/admin/attendance/list');
                 }
+
                 return redirect('/attendance');
             }
         }

@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Carbon\Carbon;
+use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
 
 class MonthRequest extends FormRequest
@@ -15,7 +16,7 @@ class MonthRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'date' => 'nullable|date_format:Y-m'
+            'date' => 'nullable|date_format:Y-m',
         ];
     }
 
@@ -34,7 +35,7 @@ class MonthRequest extends FormRequest
         ]);
     }
 
-    protected function failedValidation(\Illuminate\Contracts\Validation\Validator $validator)
+    protected function failedValidation(Validator $validator)
     {
         $this->merge([
             'validated_date' => Carbon::today()->startOfMonth(),

@@ -2,14 +2,11 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Casts\Attribute;
+use App\Enums\AttendanceStatus;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use App\Enums\AttendanceStatus;
-use App\Models\User;
-use App\Models\AttendanceCorrection;
-use App\Models\Rest;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Facades\DB;
@@ -48,8 +45,9 @@ class Attendance extends Model
     protected function date(): Attribute
     {
         return Attribute::get(function ($value) {
-            if (!$value)
+            if (! $value) {
                 return null;
+            }
 
             return Carbon::parse($value)->locale('ja');
         });
@@ -57,12 +55,12 @@ class Attendance extends Model
 
     protected function clockIn(): Attribute
     {
-        return Attribute::get(fn($value) => $value ? Carbon::parse($value)->format('H:i') : '');
+        return Attribute::get(fn ($value) => $value ? Carbon::parse($value)->format('H:i') : '');
     }
 
     protected function clockOut(): Attribute
     {
-        return Attribute::get(fn($value) => $value ? Carbon::parse($value)->format('H:i') : '');
+        return Attribute::get(fn ($value) => $value ? Carbon::parse($value)->format('H:i') : '');
     }
 
     protected function totalBreakTime(): Attribute
@@ -80,6 +78,7 @@ class Attendance extends Model
                 }
                 $hours = floor($totalMinutes / 60);
                 $remainingMinutes = $totalMinutes % 60;
+
                 return sprintf('%d:%02d', $hours, $remainingMinutes);
             }
         );
@@ -89,7 +88,7 @@ class Attendance extends Model
     {
         return Attribute::make(
             get: function () {
-                if (!$this->clock_in || !$this->clock_out) {
+                if (! $this->clock_in || ! $this->clock_out) {
                     return '0:00';
                 }
 
@@ -110,6 +109,7 @@ class Attendance extends Model
 
                 $hours = floor($workingMinutes / 60);
                 $remainingMinutes = $workingMinutes % 60;
+
                 return sprintf('%d:%02d', $hours, $remainingMinutes);
             }
         );

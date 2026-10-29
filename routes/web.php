@@ -1,18 +1,17 @@
 <?php
 
+use App\Http\Controllers\AdminAuthController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AdminCorrectionRequestController;
 use App\Http\Controllers\AttendanceController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\UserCorrectionRequestController;
-use App\Http\Controllers\AdminAuthController;
 use App\Models\AttendanceCorrection;
+use Illuminate\Foundation\Auth\EmailVerificationRequest;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Laravel\Fortify\Http\Controllers\AuthenticatedSessionController;
 use Laravel\Fortify\Http\Controllers\RegisteredUserController;
-use Illuminate\Http\Request;
-use Illuminate\Foundation\Auth\EmailVerificationRequest;
-
 
 Route::middleware(['web', 'guest'])->group(function () {
     Route::get('/login', [AuthenticatedSessionController::class, 'create'])->name('user.login');
@@ -24,15 +23,16 @@ Route::middleware(['web', 'guest'])->group(function () {
     Route::post('/admin/login', [AdminAuthController::class, 'store']);
 });
 
-
 Route::middleware(['web', 'auth:web'])->group(function () {
     Route::get('/email/verify/{id}/{hash}', function (EmailVerificationRequest $request) {
         $request->fulfill();
+
         return redirect('/attendance');
-    })->middleware(['signed',])->name('verification.verify');
+    })->middleware(['signed'])->name('verification.verify');
 
     Route::post('/email/verification-notification', function (Request $request) {
         $request->user()->sendEmailVerificationNotification();
+
         return back()->with('status', 'verification-link-sent');
     })->middleware(['throttle:6,1'])->name('verification.send');
 
@@ -50,9 +50,10 @@ Route::middleware(['web', 'auth:web'])->group(function () {
 
         Route::get('/attendance/{id}', function (Request $request, $id) {
             if ($request->is('admin*') || str_contains($request->header('referer'), '/admin/')) {
-                return redirect('/admin/attendance/' . $id);
+                return redirect('/admin/attendance/'.$id);
             }
-            return redirect('/attendance/detail/' . $id);
+
+            return redirect('/attendance/detail/'.$id);
         });
         Route::get('/attendance/detail/{id}', [UserCorrectionRequestController::class, 'create']);
         Route::post('/attendance/{id}', [UserCorrectionRequestController::class, 'store'])
@@ -61,17 +62,18 @@ Route::middleware(['web', 'auth:web'])->group(function () {
             if (auth()->check() && auth()->user()->admin_status && str_contains($request->header('referer'), '/admin/')) {
                 return app(AdminCorrectionRequestController::class)->adminApplicationIndex();
             }
+
             return app(UserCorrectionRequestController::class)->userApplicationIndex();
         });
 
         Route::get('/application/{id}', function (Request $request, $id) {
             $correction = AttendanceCorrection::find($id);
 
-            if (!$correction) {
+            if (! $correction) {
                 abort(404);
             }
 
-            return redirect('/attendance/detail/' . $correction->attendance_id . '?status=' . $correction->approval_status);
+            return redirect('/attendance/detail/'.$correction->attendance_id.'?status='.$correction->approval_status);
         });
 
     });

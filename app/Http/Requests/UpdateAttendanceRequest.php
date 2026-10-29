@@ -58,7 +58,7 @@ class UpdateAttendanceRequest extends FormRequest
                     if ($breakIn < $clockIn) {
                         $validator->errors()->add(
                             "new_break_in.{$index}",
-                            "休憩時間が不適切な値です"
+                            '休憩時間が不適切な値です'
                         );
                     }
 
@@ -66,25 +66,25 @@ class UpdateAttendanceRequest extends FormRequest
                         if ($breakIn > $clockOut) {
                             $validator->errors()->add(
                                 "new_break_in.{$index}",
-                                "休憩時間が不適切な値です",
+                                '休憩時間が不適切な値です',
                             );
                         }
                         if ($breakOut && $breakOut > $clockOut) {
                             $validator->errors()->add(
                                 "new_break_out.{$index}",
-                                "休憩時間もしくは退勤時間が不適切な値です"
+                                '休憩時間もしくは退勤時間が不適切な値です'
                             );
                         }
                     }
                 }
-            }
+            },
         ];
     }
 
     public function messages(): array
     {
         return [
-            'comment.required' => '備考を記入してください'
+            'comment.required' => '備考を記入してください',
         ];
     }
 }

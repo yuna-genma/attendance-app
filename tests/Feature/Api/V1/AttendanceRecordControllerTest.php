@@ -2,12 +2,12 @@
 
 namespace Tests\Feature\Api\V1;
 
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use App\Models\User;
 use App\Models\Attendance;
 use App\Models\Rest;
-use Tests\TestCase;
+use App\Models\User;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Laravel\Sanctum\Sanctum;
+use Tests\TestCase;
 
 class AttendanceRecordControllerTest extends TestCase
 {
@@ -45,7 +45,7 @@ class AttendanceRecordControllerTest extends TestCase
                     'total_time',
                     'total_break_time',
                     'comment',
-                ]
+                ],
             ],
             'links',
             'meta' => [
@@ -55,7 +55,7 @@ class AttendanceRecordControllerTest extends TestCase
                 'per_page',
                 'to',
                 'total',
-            ]
+            ],
         ]);
 
         $response->assertJsonFragment([
@@ -109,17 +109,17 @@ class AttendanceRecordControllerTest extends TestCase
                         'id' => $rest->id,
                         'break_in' => '12:00:00',
                         'break_out' => '13:00:00',
-                    ]
+                    ],
                 ],
                 'applications' => [
                     [
                         'id' => $correction->id,
                         'new_clock_in' => '09:15:00',
                         'new_clock_out' => '18:15:00',
-                    ]
+                    ],
                 ],
                 'comment' => 'これはテストです',
-            ]
+            ],
         ]);
     }
 
@@ -127,13 +127,13 @@ class AttendanceRecordControllerTest extends TestCase
     public function test_get_attendance_record_returns_404_if_not_found(): void
     {
         $response = $this->getJson('/api/v1/attendance-records/99999', [
-            'Accept' => 'application/json'
+            'Accept' => 'application/json',
         ]);
 
         $response->assertStatus(404);
 
         $response->assertJson([
-            'error' => '勤怠情報が見つかりませんでした。'
+            'error' => '勤怠情報が見つかりませんでした。',
         ]);
     }
 
@@ -162,7 +162,7 @@ class AttendanceRecordControllerTest extends TestCase
                 'clock_in',
                 'clock_out',
                 'comment',
-            ]
+            ],
         ]);
 
         $this->assertDatabaseHas('attendances', [
@@ -200,9 +200,9 @@ class AttendanceRecordControllerTest extends TestCase
             'message' => '勤怠日は必須です。',
             'errors' => [
                 'date' => [
-                    '勤怠日は必須です。'
-                ]
-            ]
+                    '勤怠日は必須です。',
+                ],
+            ],
         ]);
     }
 
@@ -228,9 +228,9 @@ class AttendanceRecordControllerTest extends TestCase
             'message' => '出勤時刻は必須です。',
             'errors' => [
                 'clock_in' => [
-                    '出勤時刻は必須です。'
-                ]
-            ]
+                    '出勤時刻は必須です。',
+                ],
+            ],
         ]);
     }
 
@@ -282,13 +282,13 @@ class AttendanceRecordControllerTest extends TestCase
         Sanctum::actingAs($user, ['*']);
 
         $response = $this->putJson('/api/v1/attendance-records/99999', [
-            'Accept' => 'application/json'
+            'Accept' => 'application/json',
         ]);
 
         $response->assertStatus(404);
 
         $response->assertJson([
-            'error' => '勤怠情報が見つかりませんでした。'
+            'error' => '勤怠情報が見つかりませんでした。',
         ]);
     }
 
@@ -312,7 +312,7 @@ class AttendanceRecordControllerTest extends TestCase
         $response->assertNoContent();
 
         $this->assertDatabaseMissing('attendances', [
-            'user_id' => $user->id
+            'user_id' => $user->id,
         ]);
     }
 
@@ -324,13 +324,13 @@ class AttendanceRecordControllerTest extends TestCase
         Sanctum::actingAs($user, ['*']);
 
         $response = $this->deleteJson('/api/v1/attendance-records/99999', [
-            'Accept' => 'application/json'
+            'Accept' => 'application/json',
         ]);
 
         $response->assertStatus(404);
 
         $response->assertJson([
-            'error' => '勤怠情報が見つかりませんでした。'
+            'error' => '勤怠情報が見つかりませんでした。',
         ]);
     }
 }

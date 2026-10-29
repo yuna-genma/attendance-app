@@ -3,13 +3,13 @@
 namespace Database\Seeders;
 
 use App\Models\AttendanceCorrection;
-use Carbon\Carbon;
-use Illuminate\Database\Seeder;
 use App\Models\Rest;
 use App\Models\RestCorrection;
+use Carbon\Carbon;
+use Illuminate\Database\Seeder;
+
 class RestCorrectionSeeder extends Seeder
 {
-
     public function run(): void
     {
         $attendanceCorrections = AttendanceCorrection::all();

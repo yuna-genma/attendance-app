@@ -2,12 +2,12 @@
 
 namespace Tests\Feature;
 
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Tests\TestCase;
-use App\Models\User;
 use App\Models\Attendance;
 use App\Models\Rest;
+use App\Models\User;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\DB;
+use Tests\TestCase;
 
 class UserCorrectionRequestControllerTest extends TestCase
 {
@@ -19,15 +19,15 @@ class UserCorrectionRequestControllerTest extends TestCase
         $otherUser = User::factory()->create();
         $user = User::factory()->create();
         $attendance = Attendance::factory()->create([
-            'user_id' => $user->id
+            'user_id' => $user->id,
         ]);
 
         $this->actingAs($user);
-        $response = $this->get('/attendance/detail/' . $attendance->id);
+        $response = $this->get('/attendance/detail/'.$attendance->id);
 
         $response->assertStatus(200);
-        $response->assertSee('value="' . $user->name . '"', false);
-        $response->assertDontSee('value="' . $otherUser->name . '"', false);
+        $response->assertSee('value="'.$user->name.'"', false);
+        $response->assertDontSee('value="'.$otherUser->name.'"', false);
     }
 
     /** @test */
@@ -40,7 +40,7 @@ class UserCorrectionRequestControllerTest extends TestCase
         ]);
 
         $this->actingAs($user);
-        $response = $this->get('/attendance/detail/' . $attendance->id);
+        $response = $this->get('/attendance/detail/'.$attendance->id);
 
         $response->assertStatus(200);
         $response->assertSee('value="2026年"', false);
@@ -59,7 +59,7 @@ class UserCorrectionRequestControllerTest extends TestCase
         ]);
 
         $this->actingAs($user);
-        $response = $this->get('/attendance/detail/' . $attendance->id);
+        $response = $this->get('/attendance/detail/'.$attendance->id);
 
         $response->assertStatus(200);
         $response->assertSeeInOrder([
@@ -86,7 +86,7 @@ class UserCorrectionRequestControllerTest extends TestCase
         ]);
 
         $this->actingAs($user);
-        $response = $this->get('/attendance/detail/' . $attendance->id);
+        $response = $this->get('/attendance/detail/'.$attendance->id);
 
         $response->assertStatus(200);
         $response->assertSeeInOrder([
@@ -107,7 +107,7 @@ class UserCorrectionRequestControllerTest extends TestCase
         ]);
 
         $this->actingAs($user);
-        $showResponse = $this->get('/attendance/detail/' . $attendance->id);
+        $showResponse = $this->get('/attendance/detail/'.$attendance->id);
         $showResponse->assertStatus(200);
 
         $updateResponse = $this->post("/attendance/{$attendance->id}", [
@@ -117,9 +117,9 @@ class UserCorrectionRequestControllerTest extends TestCase
         ]);
 
         $updateResponse->assertStatus(302);
-        $updateResponse->assertRedirect('/attendance/detail/' . $attendance->id);
+        $updateResponse->assertRedirect('/attendance/detail/'.$attendance->id);
         $updateResponse->assertSessionHasErrors([
-            'new_clock_in' => '出勤時間が不適切な値です'
+            'new_clock_in' => '出勤時間が不適切な値です',
         ]);
     }
 
@@ -141,7 +141,7 @@ class UserCorrectionRequestControllerTest extends TestCase
         ]);
 
         $this->actingAs($user);
-        $showResponse = $this->get('/attendance/detail/' . $attendance->id);
+        $showResponse = $this->get('/attendance/detail/'.$attendance->id);
         $showResponse->assertStatus(200);
 
         $updateResponse = $this->post("/attendance/{$attendance->id}", [
@@ -153,9 +153,9 @@ class UserCorrectionRequestControllerTest extends TestCase
         ]);
 
         $updateResponse->assertStatus(302);
-        $updateResponse->assertRedirect('/attendance/detail/' . $attendance->id);
+        $updateResponse->assertRedirect('/attendance/detail/'.$attendance->id);
         $updateResponse->assertSessionHasErrors([
-            'new_break_in.0' => '休憩時間が不適切な値です'
+            'new_break_in.0' => '休憩時間が不適切な値です',
         ]);
     }
 
@@ -177,7 +177,7 @@ class UserCorrectionRequestControllerTest extends TestCase
         ]);
 
         $this->actingAs($user);
-        $showResponse = $this->get('/attendance/detail/' . $attendance->id);
+        $showResponse = $this->get('/attendance/detail/'.$attendance->id);
         $showResponse->assertStatus(200);
 
         $updateResponse = $this->post("/attendance/{$attendance->id}", [
@@ -189,9 +189,9 @@ class UserCorrectionRequestControllerTest extends TestCase
         ]);
 
         $updateResponse->assertStatus(302);
-        $updateResponse->assertRedirect('/attendance/detail/' . $attendance->id);
+        $updateResponse->assertRedirect('/attendance/detail/'.$attendance->id);
         $updateResponse->assertSessionHasErrors([
-            'new_break_out.0' => '休憩時間もしくは退勤時間が不適切な値です'
+            'new_break_out.0' => '休憩時間もしくは退勤時間が不適切な値です',
         ]);
     }
 
@@ -213,7 +213,7 @@ class UserCorrectionRequestControllerTest extends TestCase
         ]);
 
         $this->actingAs($user);
-        $showResponse = $this->get('/attendance/detail/' . $attendance->id);
+        $showResponse = $this->get('/attendance/detail/'.$attendance->id);
         $showResponse->assertStatus(200);
 
         $updateResponse = $this->post("/attendance/{$attendance->id}", [
@@ -225,9 +225,9 @@ class UserCorrectionRequestControllerTest extends TestCase
         ]);
 
         $updateResponse->assertStatus(302);
-        $updateResponse->assertRedirect('/attendance/detail/' . $attendance->id);
+        $updateResponse->assertRedirect('/attendance/detail/'.$attendance->id);
         $updateResponse->assertSessionHasErrors([
-            'comment' => '備考を記入してください'
+            'comment' => '備考を記入してください',
         ]);
     }
 
@@ -249,7 +249,7 @@ class UserCorrectionRequestControllerTest extends TestCase
         ]);
 
         $this->actingAs($user);
-        $showResponse = $this->get('/attendance/detail/' . $attendance->id);
+        $showResponse = $this->get('/attendance/detail/'.$attendance->id);
         $showResponse->assertStatus(200);
 
         $updateResponse = $this->post("/attendance/{$attendance->id}", [
@@ -281,7 +281,7 @@ class UserCorrectionRequestControllerTest extends TestCase
         ]);
 
         $adminListResponse = $this->actingAs($admin)->get('/stamp_correction_request/list', [
-            'HTTP_REFERER' => 'http://localhost/admin/dashboard'
+            'HTTP_REFERER' => 'http://localhost/admin/dashboard',
         ]);
         $adminListResponse->assertStatus(200);
         $adminListResponse->assertSee($user->name);
@@ -336,7 +336,7 @@ class UserCorrectionRequestControllerTest extends TestCase
         $userListResponse->assertSeeInOrder([
             '承認待ち',
             $user->name,
-            '修正成功'
+            '修正成功',
         ]);
     }
 
@@ -382,7 +382,7 @@ class UserCorrectionRequestControllerTest extends TestCase
         DB::table('attendance_corrections')
             ->where('attendance_id', $attendance->id)
             ->update([
-                'approval_status' => '承認済み'
+                'approval_status' => '承認済み',
             ]);
 
         $userListResponse = $this->get('/stamp_correction_request/list');
@@ -390,7 +390,7 @@ class UserCorrectionRequestControllerTest extends TestCase
         $userListResponse->assertSeeInOrder([
             '承認済み',
             $user->name,
-            '修正成功'
+            '修正成功',
         ]);
     }
 
@@ -443,7 +443,7 @@ class UserCorrectionRequestControllerTest extends TestCase
         $userShowResponse = $this->get("/application/{$correction->id}");
         $userShowResponse->assertStatus(302);
 
-        $expectedRedirectUrl = '/attendance/detail/' . $correction->attendance_id . '?status=承認待ち';
+        $expectedRedirectUrl = '/attendance/detail/'.$correction->attendance_id.'?status=承認待ち';
         $userShowResponse->assertRedirect($expectedRedirectUrl);
 
         $redirectResponse = $this->get($expectedRedirectUrl);
@@ -453,4 +453,3 @@ class UserCorrectionRequestControllerTest extends TestCase
         $redirectResponse->assertSee('修正成功');
     }
 }
-

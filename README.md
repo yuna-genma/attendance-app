@@ -242,18 +242,16 @@ alias sail="./vendor/bin/sail"
 - 変更箇所:関連 `breaks` / `applications` は ON DELETE CASCADE で削除される<br>
   ⇒関連 `rests`/`attendance_corrections` は ON DELETE CASCADE で削除される
 
-## API Resource の構造
+### API Resource の構造
 
 - 変更箇所:`whenLoaded('breaks')` / `whenLoaded('applications') `により、関連データは eager load されたとき（詳細API）のみレスポンスに含まれ、一覧API では自動的に省略される<br>
   ⇒`whenLoaded('rests')` / `whenLoaded('attendanceCorrections')`へリレーション名変更
 
-## 機能確認手順
-
-### テストでの機能確認
+## テストでの機能確認
 
 ```bash
    # プロジェクトディレクトリに移動
-   cd contact-form-app
+   cd attendance-app
 
    # 全てのテストを実行
    sail test

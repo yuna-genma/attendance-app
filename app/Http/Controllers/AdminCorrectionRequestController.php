@@ -2,19 +2,19 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\AttendanceCorrection;
 use Carbon\Carbon;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use App\Models\AttendanceCorrection;
-use Illuminate\Support\Fluent;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Fluent;
 
 class AdminCorrectionRequestController extends Controller
 {
     public function adminApplicationIndex(): View
     {
-        if (!auth()->user()->admin_status) {
+        if (! auth()->user()->admin_status) {
             abort(403, 'このデータを閲覧する権限がありません');
         }
 
@@ -34,7 +34,7 @@ class AdminCorrectionRequestController extends Controller
 
     public function showApplication(Request $request, $attendance_correct_request_id): View
     {
-        if (!auth()->user()->admin_status) {
+        if (! auth()->user()->admin_status) {
             abort(403, 'このデータを閲覧する権限がありません');
         }
 
@@ -72,7 +72,7 @@ class AdminCorrectionRequestController extends Controller
 
     public function approve(Request $request, $attendance_correct_request_id): RedirectResponse
     {
-        if (!auth()->user()->admin_status) {
+        if (! auth()->user()->admin_status) {
             abort(403, 'このデータを操作する権限がありません');
         }
 

@@ -2,11 +2,11 @@
 
 namespace App\Http\Middleware;
 
+use App\Http\Controllers\AdminController;
+use App\Http\Requests\UpdateAttendanceRequest;
 use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
-use App\Http\Controllers\AdminController;
-use App\Http\Requests\UpdateAttendanceRequest;
 
 class RouteAttendanceActions
 {
@@ -18,6 +18,7 @@ class RouteAttendanceActions
                 $request->route('id')
             );
         }
+
         return $next($request);
     }
 }

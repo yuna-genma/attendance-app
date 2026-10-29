@@ -2,9 +2,9 @@
 
 namespace Tests\Feature;
 
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
-use App\Models\User;
 
 class UserAuthenticationTest extends TestCase
 {
@@ -48,7 +48,7 @@ class UserAuthenticationTest extends TestCase
         ]);
 
         $response->assertSessionHasErrors([
-            'email' => 'ログイン情報が登録されていません'
+            'email' => 'ログイン情報が登録されていません',
         ]);
         $this->assertGuest();
     }
@@ -66,7 +66,7 @@ class UserAuthenticationTest extends TestCase
         ]);
 
         $response->assertSessionHasErrors([
-            'email' => 'メールアドレスを入力してください'
+            'email' => 'メールアドレスを入力してください',
         ]);
     }
 
@@ -81,8 +81,7 @@ class UserAuthenticationTest extends TestCase
         ]);
 
         $response->assertSessionHasErrors([
-            'password' => 'パスワードを入力してください'
+            'password' => 'パスワードを入力してください',
         ]);
     }
-
 }

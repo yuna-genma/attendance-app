@@ -2,23 +2,23 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\DateRequest;
 use App\Http\Requests\MonthRequest;
 use App\Http\Requests\UpdateAttendanceRequest;
 use App\Models\Attendance;
 use App\Models\AttendanceCorrection;
-use App\Http\Requests\DateRequest;
 use App\Models\User;
+use Carbon\Carbon;
+use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Contracts\View\View;
 use Symfony\Component\HttpFoundation\StreamedResponse;
-use Carbon\Carbon;
 
 class AdminController extends Controller
 {
     public function attendanceIndex(DateRequest $request): View
     {
-        if (!auth()->user()->admin_status) {
+        if (! auth()->user()->admin_status) {
             abort(403, 'このデータを閲覧する権限がありません');
         }
 
@@ -35,7 +35,6 @@ class AdminController extends Controller
 
         $users = User::all();
 
-
         return view('admin.admin-attendance-list', compact(
             'date',
             'previousDay',
@@ -47,7 +46,7 @@ class AdminController extends Controller
 
     public function show($id): View
     {
-        if (!auth()->user()->admin_status) {
+        if (! auth()->user()->admin_status) {
             abort(403, 'この勤怠データを閲覧する権限がありません');
         }
 
@@ -83,7 +82,7 @@ class AdminController extends Controller
 
     public function update(UpdateAttendanceRequest $request, $id): RedirectResponse
     {
-        if (!auth()->user()->admin_status) {
+        if (! auth()->user()->admin_status) {
             abort(403, 'この操作を行う権限がありません');
         }
 
@@ -96,17 +95,18 @@ class AdminController extends Controller
 
     public function staffIndex(): View
     {
-        if (!auth()->user()->admin_status) {
+        if (! auth()->user()->admin_status) {
             abort(403, 'このデータを閲覧する権限がありません');
         }
 
         $users = User::where('admin_status', false)->get();
+
         return view('admin.staff-list', compact('users'));
     }
 
     public function staffShow(MonthRequest $request, $id): View
     {
-        if (!auth()->user()->admin_status) {
+        if (! auth()->user()->admin_status) {
             abort(403, 'このデータを閲覧する権限がありません');
         }
 
@@ -135,7 +135,6 @@ class AdminController extends Controller
             ];
         })->toArray();
 
-
         return view('admin.staff-attendance-list', compact(
             'user',
             'formattedAttendanceRecords',
@@ -147,7 +146,7 @@ class AdminController extends Controller
 
     public function exportCsv(Request $request): StreamedResponse
     {
-        if (!auth()->user()->admin_status) {
+        if (! auth()->user()->admin_status) {
             abort(403, 'このデータを閲覧する権限がありません');
         }
 

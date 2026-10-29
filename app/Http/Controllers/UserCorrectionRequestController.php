@@ -7,8 +7,8 @@ use App\Models\Attendance;
 use App\Models\AttendanceCorrection;
 use Carbon\Carbon;
 use Illuminate\Contracts\View\View;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 
 class UserCorrectionRequestController extends Controller
@@ -50,7 +50,7 @@ class UserCorrectionRequestController extends Controller
         if ($pendingCorrection) {
             $commentMessage = "【承認待ちのため修正はできません】\n";
         }
-        $displayComment = $correction ? $commentMessage . $correction->comment : null;
+        $displayComment = $correction ? $commentMessage.$correction->comment : null;
 
         $data = [
             'id' => $attendance->id,
@@ -86,13 +86,13 @@ class UserCorrectionRequestController extends Controller
             $correction = $attendance->attendanceCorrections()->create([
                 'user_id' => auth()->id(),
                 'approved_by' => null,
-                'new_clock_in' => Carbon::parse($baseDate . ' ' . $validated['new_clock_in']),
-                'new_clock_out' => Carbon::parse($baseDate . ' ' . $validated['new_clock_out']),
+                'new_clock_in' => Carbon::parse($baseDate.' '.$validated['new_clock_in']),
+                'new_clock_out' => Carbon::parse($baseDate.' '.$validated['new_clock_out']),
                 'comment' => $validated['comment'] ?? null,
                 'approval_status' => '承認待ち',
             ]);
 
-            if (!empty($validated['new_break_in']) && is_array($validated['new_break_in'])) {
+            if (! empty($validated['new_break_in']) && is_array($validated['new_break_in'])) {
                 $existRestIds = $attendance->rests->pluck('id')->toArray();
 
                 foreach ($validated['new_break_in'] as $index => $breakIn) {
@@ -103,8 +103,8 @@ class UserCorrectionRequestController extends Controller
 
                         $correction->restCorrections()->create([
                             'rest_id' => $restId,
-                            'new_break_in' => Carbon::parse($baseDate . ' ' . $breakIn),
-                            'new_break_out' => Carbon::parse($baseDate . ' ' . $breakOut),
+                            'new_break_in' => Carbon::parse($baseDate.' '.$breakIn),
+                            'new_break_out' => Carbon::parse($baseDate.' '.$breakOut),
                         ]);
                     }
                 }
@@ -135,5 +135,4 @@ class UserCorrectionRequestController extends Controller
 
         return view('user.user-application-list', compact('user', 'formattedApplications'));
     }
-
 }

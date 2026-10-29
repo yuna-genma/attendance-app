@@ -28,7 +28,7 @@ class AttendanceRecordController extends Controller
                 $q->where('date', $request->date);
             })
             ->when($request->filled('month'), function ($q) use ($request) {
-                $q->where('date', 'like', $request->month . '%');
+                $q->where('date', 'like', $request->month.'%');
                 $date = Carbon::parse($request->month);
                 $q->whereYear('date', $date->year)->whereMonth('date', $date->month);
             })
@@ -56,6 +56,7 @@ class AttendanceRecordController extends Controller
                 'user_id' => $request->user()->id,
                 'comment' => $validated['comment'] ?? null,
             ]);
+
             return $attendance;
         });
 
@@ -76,18 +77,19 @@ class AttendanceRecordController extends Controller
 
             $attendanceRecord->attendanceCorrections()->updateOrCreate(
                 [
-                    'user_id' => $request->user()->id
+                    'user_id' => $request->user()->id,
                 ],
                 [
-                    'comment' => $validated['comment'] ?? null
+                    'comment' => $validated['comment'] ?? null,
                 ]
             );
+
             return $attendanceRecord;
         });
 
         $attendanceRecord->load(['user', 'rests', 'attendanceCorrections']);
 
-        return (new AttendanceRecordResource($attendanceRecord));
+        return new AttendanceRecordResource($attendanceRecord);
     }
 
     public function destroy(Attendance $attendanceRecord): JsonResponse

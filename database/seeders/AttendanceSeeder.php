@@ -2,14 +2,13 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Seeder;
-use App\Models\User;
 use App\Models\Attendance;
+use App\Models\User;
 use Carbon\Carbon;
+use Illuminate\Database\Seeder;
 
 class AttendanceSeeder extends Seeder
 {
-
     public function run(): void
     {
         $now = Carbon::now('Asia/Tokyo')->startOfDay();
@@ -86,6 +85,7 @@ class AttendanceSeeder extends Seeder
             $currentDate->addDay();
         }
     }
+
     private function createIntentionalAttendances(
         User $user,
         Carbon $targetMonth,
@@ -119,7 +119,7 @@ class AttendanceSeeder extends Seeder
         foreach ($patterns as $pattern) {
             while (
                 $currentDate->month === $targetMonth->month
-                && !$currentDate->isWeekday()
+                && ! $currentDate->isWeekday()
             ) {
                 $currentDate->addDay();
             }

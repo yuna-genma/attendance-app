@@ -2,12 +2,12 @@
 
 namespace Tests\Feature;
 
+use App\Models\Attendance;
+use App\Models\Rest;
+use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
-use App\Models\User;
-use App\Models\Attendance;
-use App\Models\Rest;
 
 class ReportControllerTest extends TestCase
 {
@@ -47,7 +47,7 @@ class ReportControllerTest extends TestCase
             'clock_out' => '20:16:00',
         ]);
         Rest::factory()->create([
-            'attendance_id' => $attendance2->id
+            'attendance_id' => $attendance2->id,
         ]);
 
         $attendance3 = Attendance::create([
@@ -57,7 +57,7 @@ class ReportControllerTest extends TestCase
             'clock_out' => '17:30:00',
         ]);
         Rest::factory()->create([
-            'attendance_id' => $attendance3->id
+            'attendance_id' => $attendance3->id,
         ]);
 
         $response = $this->actingAs($user)->get('/attendance/report');
@@ -72,6 +72,7 @@ class ReportControllerTest extends TestCase
 
         $response->assertViewHas('monthlyTrend', function ($monthlyTrend) {
             $thisMonthData = collect($monthlyTrend)->firstWhere('month', '2026年10月');
+
             return count($monthlyTrend) === 6
                 && $thisMonthData['work_minutes'] === 1561
                 && $thisMonthData['overtime_minutes'] === 121;
@@ -102,6 +103,7 @@ class ReportControllerTest extends TestCase
             $allZero = collect($monthlyTrend)->every(function ($row) {
                 return $row['work_minutes'] === 0 && $row['overtime_minutes'] === 0;
             });
+
             return count($monthlyTrend) === 6 && $allZero;
         });
 

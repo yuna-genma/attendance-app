@@ -2,13 +2,12 @@
 
 namespace Tests\Feature;
 
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use App\Models\User;
 use App\Models\Attendance;
 use App\Models\AttendanceCorrection;
-use Tests\TestCase;
 use App\Models\Rest;
-use App\Models\RestCorrection;
+use App\Models\User;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\TestCase;
 
 class AdminCorrectionRequestControllerTest extends TestCase
 {
@@ -36,7 +35,7 @@ class AdminCorrectionRequestControllerTest extends TestCase
 
         $attendanceUserB = Attendance::factory()->create([
             'user_id' => $userB->id,
-            'date' => '2026-10-10'
+            'date' => '2026-10-10',
         ]);
 
         AttendanceCorrection::factory()->create([
@@ -44,7 +43,7 @@ class AdminCorrectionRequestControllerTest extends TestCase
             'attendance_id' => $attendanceUserA->id,
             'approval_status' => '承認待ち',
             'comment' => '入力ミス',
-            'created_at' => '2026-10-22'
+            'created_at' => '2026-10-22',
         ]);
 
         AttendanceCorrection::factory()->create([
@@ -52,7 +51,7 @@ class AdminCorrectionRequestControllerTest extends TestCase
             'attendance_id' => $attendanceUserB->id,
             'approval_status' => '承認待ち',
             'comment' => '入力ミス',
-            'created_at' => '2026-10-22'
+            'created_at' => '2026-10-22',
         ]);
 
         AttendanceCorrection::factory()->create([
@@ -60,7 +59,7 @@ class AdminCorrectionRequestControllerTest extends TestCase
             'attendance_id' => $attendanceUserA->id,
             'approval_status' => '承認済み',
             'comment' => '打刻忘れ',
-            'created_at' => '2026-10-22'
+            'created_at' => '2026-10-22',
         ]);
 
         $response = $this->actingAs($admin)
@@ -105,7 +104,7 @@ class AdminCorrectionRequestControllerTest extends TestCase
 
         $attendanceUserB = Attendance::factory()->create([
             'user_id' => $userB->id,
-            'date' => '2026-10-10'
+            'date' => '2026-10-10',
         ]);
 
         AttendanceCorrection::factory()->create([
@@ -113,7 +112,7 @@ class AdminCorrectionRequestControllerTest extends TestCase
             'attendance_id' => $attendanceUserA->id,
             'approval_status' => '承認済み',
             'comment' => '入力ミス',
-            'created_at' => '2026-10-22'
+            'created_at' => '2026-10-22',
         ]);
 
         AttendanceCorrection::factory()->create([
@@ -121,7 +120,7 @@ class AdminCorrectionRequestControllerTest extends TestCase
             'attendance_id' => $attendanceUserB->id,
             'approval_status' => '承認済み',
             'comment' => '入力ミス',
-            'created_at' => '2026-10-22'
+            'created_at' => '2026-10-22',
         ]);
 
         AttendanceCorrection::factory()->create([
@@ -129,9 +128,8 @@ class AdminCorrectionRequestControllerTest extends TestCase
             'attendance_id' => $attendanceUserA->id,
             'approval_status' => '承認待ち',
             'comment' => '打刻忘れ',
-            'created_at' => '2026-10-22'
+            'created_at' => '2026-10-22',
         ]);
-
 
         $response = $this->actingAs($admin)
             ->from('/admin/attendance/list')
@@ -176,7 +174,7 @@ class AdminCorrectionRequestControllerTest extends TestCase
             'attendance_id' => $attendance->id,
             'approval_status' => '承認待ち',
             'comment' => '入力ミス',
-            'created_at' => '2026-10-22'
+            'created_at' => '2026-10-22',
         ]);
 
         $response = $this->actingAs($admin)->get("/stamp_correction_request/approve/{$attendanceCorrection->id}");
@@ -221,7 +219,7 @@ class AdminCorrectionRequestControllerTest extends TestCase
             'new_clock_in' => '09:00',
             'new_clock_out' => '18:00',
             'comment' => '入力ミス',
-            'created_at' => '2026-10-22'
+            'created_at' => '2026-10-22',
         ]);
 
         $response = $this->actingAs($admin)

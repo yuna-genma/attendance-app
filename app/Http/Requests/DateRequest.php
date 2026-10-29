@@ -7,7 +7,6 @@ use Illuminate\Foundation\Http\FormRequest;
 
 class DateRequest extends FormRequest
 {
-
     public function authorize(): bool
     {
         return true;

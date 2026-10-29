@@ -4,8 +4,6 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use App\Models\AttendanceCorrection;
-use App\Models\Rest;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class RestCorrection extends Model
@@ -28,5 +26,4 @@ class RestCorrection extends Model
     {
         return $this->belongsTo(Rest::class);
     }
-
 }

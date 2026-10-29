@@ -3,11 +3,11 @@
 namespace Tests\Feature;
 
 use App\Enums\AttendanceStatus;
+use App\Models\Attendance;
+use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
-use App\Models\User;
-use App\Models\Attendance;
 
 class AttendanceControllerTest extends TestCase
 {
@@ -450,7 +450,7 @@ class AttendanceControllerTest extends TestCase
         Carbon::setTestNow($secondBreakOutTime);
 
         $secondBreakOut = [
-            'action' => 'break_out'
+            'action' => 'break_out',
         ];
 
         $secondBreakOutResponse = $this->actingAs($user)
@@ -646,9 +646,9 @@ class AttendanceControllerTest extends TestCase
                 ['date' => now()->startOfMonth()->addDay()->format('Y-m-d')],
                 ['date' => now()->startOfMonth()->addDays(2)->format('Y-m-d')],
             )
-            ->create([
-                'user_id' => $user->id,
-            ]);
+                ->create([
+                    'user_id' => $user->id,
+                ]);
 
         $response = $this->actingAs($user)->get('/attendance/list');
 
@@ -766,11 +766,11 @@ class AttendanceControllerTest extends TestCase
 
         $listResponse = $this->actingAs($user)->get('/attendance/list');
         $listResponse->assertStatus(200);
-        $listResponse->assertSee('/attendance/' . $attendance->id);
+        $listResponse->assertSee('/attendance/'.$attendance->id);
 
         $showResponse = $this->actingAs($user)
             ->followingRedirects()
-            ->get('/attendance/' . $attendance->id);
+            ->get('/attendance/'.$attendance->id);
 
         $showResponse->assertStatus(200);
         $showResponse->assertSee('勤怠詳細');

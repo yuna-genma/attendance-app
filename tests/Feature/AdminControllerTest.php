@@ -3,11 +3,11 @@
 namespace Tests\Feature;
 
 use App\Models\Attendance;
+use App\Models\Rest;
+use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
-use App\Models\User;
-use App\Models\Rest;
-use Carbon\Carbon;
 
 class AdminControllerTest extends TestCase
 {
@@ -290,7 +290,7 @@ class AdminControllerTest extends TestCase
         $updateResponse->assertStatus(302);
         $updateResponse->assertRedirect("/admin/attendance/{$attendance->id}");
         $updateResponse->assertSessionHasErrors([
-            'new_clock_in' => '出勤時間もしくは退勤時間が不適切な値です'
+            'new_clock_in' => '出勤時間もしくは退勤時間が不適切な値です',
         ]);
     }
 
@@ -329,7 +329,7 @@ class AdminControllerTest extends TestCase
         $updateResponse->assertStatus(302);
         $updateResponse->assertRedirect("/admin/attendance/{$attendance->id}");
         $updateResponse->assertSessionHasErrors([
-            'new_break_in.0' => '休憩時間が不適切な値です'
+            'new_break_in.0' => '休憩時間が不適切な値です',
         ]);
     }
 
@@ -368,7 +368,7 @@ class AdminControllerTest extends TestCase
         $updateResponse->assertStatus(302);
         $updateResponse->assertRedirect("/admin/attendance/{$attendance->id}");
         $updateResponse->assertSessionHasErrors([
-            'new_break_out.0' => '休憩時間もしくは退勤時間が不適切な値です'
+            'new_break_out.0' => '休憩時間もしくは退勤時間が不適切な値です',
         ]);
     }
 
@@ -407,7 +407,7 @@ class AdminControllerTest extends TestCase
         $updateResponse->assertStatus(302);
         $updateResponse->assertRedirect("/admin/attendance/{$attendance->id}");
         $updateResponse->assertSessionHasErrors([
-            'comment' => '備考を記入してください'
+            'comment' => '備考を記入してください',
         ]);
     }
 
@@ -562,7 +562,7 @@ class AdminControllerTest extends TestCase
 
         $showResponse = $this->actingAs($admin)
             ->followingRedirects()
-            ->get('/admin/attendance/' . $attendance->id);
+            ->get('/admin/attendance/'.$attendance->id);
 
         $showResponse->assertStatus(200);
         $showResponse->assertSee('勤怠詳細');

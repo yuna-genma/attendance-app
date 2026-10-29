@@ -2,9 +2,9 @@
 
 namespace Tests\Feature;
 
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
-use App\Models\User;
 
 class RegistrationTest extends TestCase
 {
@@ -47,7 +47,7 @@ class RegistrationTest extends TestCase
         ]);
 
         $response->assertSessionHasErrors([
-            'name' => 'お名前を入力してください'
+            'name' => 'お名前を入力してください',
         ]);
     }
 
@@ -62,7 +62,7 @@ class RegistrationTest extends TestCase
         ]);
 
         $response->assertSessionHasErrors([
-            'email' => 'メールアドレスを入力してください'
+            'email' => 'メールアドレスを入力してください',
         ]);
     }
 
@@ -105,7 +105,7 @@ class RegistrationTest extends TestCase
         ]);
 
         $response->assertSessionHasErrors([
-            'password' => 'パスワードを入力してください'
+            'password' => 'パスワードを入力してください',
         ]);
     }
 
@@ -120,7 +120,7 @@ class RegistrationTest extends TestCase
         ]);
 
         $response->assertSessionHasErrors([
-            'password' => 'パスワードは8文字以上で入力してください'
+            'password' => 'パスワードは8文字以上で入力してください',
         ]);
     }
 
@@ -135,7 +135,7 @@ class RegistrationTest extends TestCase
         ]);
 
         $response->assertSessionHasErrors([
-            'password' => 'パスワードと一致しません'
+            'password' => 'パスワードと一致しません',
         ]);
     }
 }

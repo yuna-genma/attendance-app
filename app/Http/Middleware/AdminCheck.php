@@ -9,12 +9,12 @@ use Symfony\Component\HttpFoundation\Response;
 
 class AdminCheck
 {
-
     public function handle(Request $request, Closure $next): Response
     {
         if (Auth::check() && Auth::user()->admin_status) {
             return $next($request);
         }
+
         return redirect('/admin/login')->with('error', '管理者権限がありません');
     }
 }

@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Contracts\View\View;
 use App\Models\Attendance;
 use Carbon\Carbon;
+use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\Auth;
 
 class ReportController extends Controller
@@ -24,7 +24,7 @@ class ReportController extends Controller
             ->get();
 
         $processedRecords = $attendances->map(function ($attendance) {
-            if (!$attendance->getRawOriginal('clock_in') || !$attendance->getRawOriginal('clock_out')) {
+            if (! $attendance->getRawOriginal('clock_in') || ! $attendance->getRawOriginal('clock_out')) {
                 return [
                     'month_key' => null,
                     'work' => 0,
@@ -44,6 +44,7 @@ class ReportController extends Controller
                 if ($rest->break_in && $rest->break_out) {
                     return Carbon::parse($rest->break_in)->diffInMinutes(Carbon::parse($rest->break_out));
                 }
+
                 return 0;
             });
 
@@ -63,7 +64,7 @@ class ReportController extends Controller
                 'is_early' => $isEarly,
                 'is_long' => $isLong,
             ];
-        })->filter(fn($item) => $item['month_key'] !== null);
+        })->filter(fn ($item) => $item['month_key'] !== null);
 
         $totalDays = $processedRecords->count();
         $summary = [
